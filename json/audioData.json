@@ -1,0 +1,36 @@
+[
+    {
+        "id": "1",
+        "title": "Title 1",
+        "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+        "artwork": "https://www.bensound.com/bensound-img/happyrock.jpg"
+    },
+
+    {
+        "id": "2",
+        "title": "Title 2",
+        "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+        "artwork": "https://www.bensound.com/bensound-img/punky.jpg"
+    },
+
+    {
+        "id": "3",
+        "title": "Title 3",
+        "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+        "artwork": "https://www.bensound.com/bensound-img/actionable.jpg"
+    },
+
+    {
+        "id": "4",
+        "title": "Title 4",
+        "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+        "artwork": "https://www.bensound.com/bensound-img/romantic.jpg"
+    },
+
+    {
+        "id": "5",
+        "title": "Title 5",
+        "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
+        "artwork": "https://www.bensound.com/bensound-img/allthat.jpg"
+    }
+]
