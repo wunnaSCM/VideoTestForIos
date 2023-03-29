@@ -1,4 +1,4 @@
-import React, { Component, useState, useRef, useEffect } from 'react';
+import React, { Component } from 'react';
 import { View, Text, StyleSheet, StatusBar } from 'react-native';
 import Video from 'react-native-video';
 import { NavigationContainer } from '@react-navigation/native';
@@ -7,6 +7,7 @@ import Header from '../../components/audio/Header';
 import Controls from '../../components/audio/Controls';
 import SeekBar from '../../components/audio/SeekBar';
 import TrackDetails from '../../components/audio/TrackDetails';
+import FileEncryptionModule from '../modules/FileEncryptionModule';
 
 export default class AudioPlayerScreen extends Component {
     constructor(props) {
@@ -18,7 +19,13 @@ export default class AudioPlayerScreen extends Component {
             selectedTrack: 0,
             repeatOn: false,
             shuffleOn: false,
+            audio: 
         };
+    }
+
+    componentDidMount() {
+      console.log('testing')
+      this.decrypt()
     }
 
     setDuration(data) {
@@ -48,19 +55,35 @@ export default class AudioPlayerScreen extends Component {
         this.refs.audioElement.seek(forwardRes);
     }
 
+    async decrypt () {
+        const encryptionKey = "S-C-M-MobileTeam"
+        const sourceFile = audio.downloadFileUri;
+        const desFile = audio.decryptedFilePath;
+
+        console.log('audio', audio)
+
+        try {
+            const proms = await FileEncryptionModule.decryptFile(sourceFile, desFile, encryptionKey)
+            console.log(`${proms}`);
+        } catch (e) {
+            console.error(e);
+        }
+
+       
+    }
+
 
     render() {
-
         const { route } = this.props
         const { audio } = route.params
         const { navigation } = this.props;
-        
-        console.log('title update', audio.downloadUrl)  
 
-        const track = audio.downloadUrl[this.state.selectedTrack];
+
+
+        const track = audio.decryptedFilePath[this.state.selectedTrack];
         const video = this.state.isChanging ? null : (
             <Video
-                source={{ uri: audio.downloadUrl }}
+                source={{ uri: audio.decryptedFilePath }}
                 ref="audioElement"
                 paused={this.state.paused}
                 resizeMode="cover"
@@ -77,8 +100,8 @@ export default class AudioPlayerScreen extends Component {
         return (
             <View style={styles.container}>
                 <StatusBar hidden={true} />
-                <Header message="Playing From Charts" onDownPress={() => navigation.goBack()}/>
-                <AlbumArt url={audio.artwork}/>
+                <Header message="Playing From Charts" onDownPress={() => navigation.goBack()} />
+                <AlbumArt url={audio.artwork} />
                 <TrackDetails title={audio.title} />
                 <SeekBar
                     onSeek={this.seek.bind(this)}
@@ -90,7 +113,7 @@ export default class AudioPlayerScreen extends Component {
                     onPressRepeat={() => this.setState({ repeatOn: !this.state.repeatOn })}
                     repeatOn={this.state.repeatOn}
                     shuffleOn={this.state.shuffleOn}
-                    forwardDisabled={this.state.selectedTrack === audio.downloadUrl.length - 1}
+                    forwardDisabled={this.state.selectedTrack === audio.decryptedFilePath.length - 1}
                     onPressShuffle={() => this.setState({ shuffleOn: !this.state.shuffleOn })}
                     onPressPlay={() => this.setState({ paused: false })}
                     onPressPause={() => this.setState({ paused: true })}
@@ -100,7 +123,7 @@ export default class AudioPlayerScreen extends Component {
                 />
                 {video}
 
-               
+
             </View>
         );
     }

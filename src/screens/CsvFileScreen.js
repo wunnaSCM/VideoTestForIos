@@ -8,6 +8,7 @@ import CsvCard from '../../components/CsvCard';
 import Context from '../hooks/Context';
 import { fileServices } from '../services/fileServices';
 import { API_URL } from '../util/network/config';
+import Loading from '../../components/Loading';
 
 var RNFS = require('react-native-fs');
 
@@ -40,7 +41,7 @@ const CsvFileScreen = () => {
         const type = 'csv'
         console.log("calling blah blah");
         const response = await fileServices(type)
-        if(response.status == "success"){
+        if (response.status == "success") {
             setCsvArr(response.data)
         }
 
@@ -52,41 +53,21 @@ const CsvFileScreen = () => {
         console.log('csvArr', csvArr)
     }
 
-
-    const downloadCsv = async (url, id) => {
-        console.log('csvUrl', url)
+    const downloadCsv = async (id) => {
 
         try {
             const { config } = ReactNativeBlobUtil
             setId(id)
             setIsLoading(true)
             config({ fileCache: true, appendExt: 'csv' })
-                .fetch('GET', API_URL + `file/${id}`)
+                .fetch('GET', API_URL + `/file/${id}`)
                 .progress((received, total) =>
                     setPercentTxt(Math.round((received / total) * 100))
                 )
                 .then(async response => {
                     console.log('response', response.path())
 
-                    const ENCRYPTED_FILE_PATH = `${RNFS.DocumentDirectoryPath}/encryptedVideo.csv`;
-                    const DECRYPTED_FILE_PATH = response.path()
-                    
-                    // Encrypt
-                    // const key = '111111';
-                    // const videoData = await RNFS.readFile(response.path(), 'base64');
-                    // console.log('file', videoData)
-                    // const encryptedVideoData = CryptoJS.AES.encrypt(videoData, key).toString();
-                    // await RNFS.writeFile(ENCRYPTED_FILE_PATH, encryptedVideoData, 'base64');
-                    // console.log(`Csv file encrypted successfully with key:`, ENCRYPTED_FILE_PATH);
-
-                    // Decrypt
-                    // const encrypt = await RNFS.readFile(ENCRYPTED_FILE_PATH, 'base64');
-                    // const decryptedVideoData = CryptoJS.AES.decrypt(encrypt, key).toString(CryptoJS.enc.Utf8);
-                    // await RNFS.writeFile(DECRYPTED_FILE_PATH, decryptedVideoData, 'base64');
-                    // console.log('Csv file decrypted successfully', DECRYPTED_FILE_PATH);
-                    // console.log('original path ->', response.path())
-
-                    const item = { downloadUrl: response.path() }
+                    const item = { downloadFileUri: response.path(), decryptedFilePath: `${RNFS.DocumentDirectoryPath}/${id}decryptedCsv.csv` }
                     const index = csvArr.findIndex(obj => obj.id === id)
 
                     csvArr[index] = { ...csvArr[index], ...item }
@@ -104,15 +85,17 @@ const CsvFileScreen = () => {
         }
     }
 
-    const removeCsv = async (id, url) => {
+    const removeCsv = async (id, url, decryptPath) => {
+        console.log(id, url, decryptPath)
         try {
             await ReactNativeBlobUtil.fs.unlink(url)
+            await ReactNativeBlobUtil.fs.unlink(decryptPath)
             console.log('File deleted')
 
             const result = await AsyncStorage.getItem('csvKeys')
             const csvFiles = JSON.parse(result)
             const index = csvFiles.findIndex(obj => obj.id === id)
-            const item = { downloadUrl: null }
+            const item = { downloadFileUri: null, decryptedFilePath: null }
             csvFiles[index] = { ...csvFiles[index], ...item }
             console.log('inner delete', csvFiles)
             setCsvArr(csvFiles)
@@ -123,13 +106,13 @@ const CsvFileScreen = () => {
     }
 
     return (
-        <View style={styles.container}>          
+        <View style={styles.container}>
             <Context.Provider value={{ isLoading, id, percentTxt }}>
                 <FlatList
                     data={csvArr}
                     numColumns={2}
                     keyExtractor={item => item.id}
-        renderItem={({ item }) => <CsvCard csv={item} onDownload={() => downloadCsv(item.url, item.id)} onDelete={() => removeCsv(item.id, item.downloadUrl)} />}
+                    renderItem={({ item }) => <CsvCard csv={item} onDownload={() => downloadCsv(item.id)} onDelete={() => removeCsv(item.id, item.downloadFileUri, item.decryptedFilePath)} />}
                 />
             </Context.Provider>
 

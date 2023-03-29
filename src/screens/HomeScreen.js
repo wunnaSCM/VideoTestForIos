@@ -78,7 +78,7 @@ const HomeScreen = () => {
             const { config } = ReactNativeBlobUtil
 
             config({ fileCache: true, appendExt: 'mp4' })
-                .fetch('GET', API_URL + `file/${id}`)
+                .fetch('GET', API_URL + `/file/${id}`)
                 .progress((received, total) => {
                     const idAndPercentage = { id: id, percent: Math.round((received / total) * 100) };
                     setPercentTxt(idAndPercentage)
@@ -86,26 +86,7 @@ const HomeScreen = () => {
                 .then(async response => {
                     console.log('response', response.path())
 
-                    const ENCRYPTED_FILE_PATH = response.path()
-                    // const DECRYPTED_FILE_PATH = response.path()
-
-                    // Encrypt
-                    const key = '111111';
-                    const videoData = await RNFS.readFile(response.path());
-                    const encryptedVideoData = CryptoJS.AES.encrypt(videoData, key).toString();
-                    await RNFS.writeFile(ENCRYPTED_FILE_PATH, encryptedVideoData);
-                    console.log(`Video file encrypted successfully with key:`, ENCRYPTED_FILE_PATH);
-
-                    // Decrypt
-                    // const encrypt = await RNFS.readFile(ENCRYPTED_FILE_PATH, 'base64');
-                    // const decryptedVideoData = CryptoJS.AES.decrypt(encrypt, key).toString(CryptoJS.enc.Utf8);
-                    // await RNFS.writeFile(DECRYPTED_FILE_PATH, decryptedVideoData, 'base64');
-                    // console.log('Video file decrypted successfully', DECRYPTED_FILE_PATH);
-                    // console.log('original path ->', response.path())
-                    // console.log('encrypt', ENCRYPTED_FILE_PATH)
-
-
-                    const item = { downloadFileUri: ENCRYPTED_FILE_PATH, decryptedFilePath: `${RNFS.DocumentDirectoryPath}/${id}decryptedVideo.mp4` }
+                    const item = { downloadFileUri: response.path(), decryptedFilePath: `${RNFS.DocumentDirectoryPath}/${id}decryptedVideo.mp4` }
                     // const item = {downloadFileUri: response.path()}
                     const index = movieArr.findIndex(obj => obj.id === id)
 
@@ -138,7 +119,7 @@ const HomeScreen = () => {
             const result = await AsyncStorage.getItem('keys')
             const movies = JSON.parse(result)
             const index = movies.findIndex(obj => obj.id === id)
-            const item = { downloadFileUri: null }
+            const item = { downloadFileUri: null, decryptedFilePath: null }
             movies[index] = { ...movies[index], ...item }
             console.log('inner delete', movies)
             setMovieArr(movies)

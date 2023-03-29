@@ -53,39 +53,21 @@ export default function PdfFileScreen() {
     }
 
 
-    const downloadPdf = async (url, id) => {
+    const downloadPdf = async (id) => {
 
         try {
             const { config } = ReactNativeBlobUtil
             setId(id)
             setIsLoading(true)
             config({ fileCache: true, appendExt: 'pdf' })
-                .fetch('GET', API_URL + `file/${id}`)
+                .fetch('GET', API_URL + `/file/${id}`)
                 .progress((received, total) =>
                     setPercentTxt(Math.round((received / total) * 100))
                 )
                 .then(async response => {
                     console.log('response', response.path())
 
-                    const ENCRYPTED_FILE_PATH = `${RNFS.DocumentDirectoryPath}/encryptedVideo.pdf`;
-                    const DECRYPTED_FILE_PATH = response.path()
-
-                    // Encrypt
-                    const key = '111111';
-                    const videoData = await RNFS.readFile(response.path(), 'base64');
-                    const encryptedVideoData = CryptoJS.AES.encrypt(videoData, key).toString();
-                    await RNFS.writeFile(ENCRYPTED_FILE_PATH, encryptedVideoData, 'base64');
-                    console.log(`Pdf file encrypted successfully with key:`, ENCRYPTED_FILE_PATH);
-
-                    // Decrypt
-                    const encrypt = await RNFS.readFile(ENCRYPTED_FILE_PATH, 'base64');
-                    const decryptedVideoData = CryptoJS.AES.decrypt(encrypt, key).toString(CryptoJS.enc.Utf8);
-                    await RNFS.writeFile(DECRYPTED_FILE_PATH, decryptedVideoData, 'base64');
-                    console.log('Pdf file decrypted successfully', DECRYPTED_FILE_PATH);
-                    console.log('original path ->', response.path())
-
-
-                    const item = { downloadUrl: DECRYPTED_FILE_PATH }
+                    const item = { downloadFileUri: response.path(), decryptedFilePath: `${RNFS.DocumentDirectoryPath}/${id}decryptedPdf.pdf` }
                     const index = pdfArr.findIndex(obj => obj.id === id)
 
                     pdfArr[index] = { ...pdfArr[index], ...item }
@@ -103,15 +85,17 @@ export default function PdfFileScreen() {
         }
     }
 
-    const removePdf = async (id, url) => {
+    const removePdf = async (id, url, decryptPath) => {
+        console.log(id, url, decryptPath)
         try {
             await ReactNativeBlobUtil.fs.unlink(url)
+            await ReactNativeBlobUtil.fs.unlink(decryptPath)
             console.log('File deleted')
 
             const result = await AsyncStorage.getItem('pdfKeys')
             const pdfs = JSON.parse(result)
             const index = pdfs.findIndex(obj => obj.id === id)
-            const item = { downloadUrl: null }
+            const item = { downloadFileUri: null, decryptedFilePath: null }
             pdfs[index] = { ...pdfs[index], ...item }
             console.log('inner delete', pdfs)
             setPdfArr(pdfs)
@@ -129,7 +113,7 @@ export default function PdfFileScreen() {
                     data={pdfArr}
                     numColumns={2}
                     keyExtractor={item => item.id}
-                    renderItem={({ item }) => <PdfCard pdf={item} onDownload={() => downloadPdf(item.url, item.id)} onDelete={() => removePdf(item.id, item.url)} />}
+                    renderItem={({ item }) => <PdfCard pdf={item} onDownload={() => downloadPdf(item.id)} onDelete={() => removePdf(item.id, item.downloadFileUri, item.decryptedFilePath)} />}
                 />
             </Context.Provider>
 

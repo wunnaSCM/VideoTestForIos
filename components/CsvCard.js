@@ -30,37 +30,10 @@ export default function CsvCard({ csv, onDownload, onDelete }) {
     }, [csv.url])
 
     const cardOnPress = async () => {
-        if (csv.downloadUrl != null) {
-            // navigation.navigate('CsvPlayer', { csv: csv })
-            // console.log('hello')
-            // const videoData = await RNFS.readFile(csv.downloadUrl, 'base64');
-
-            // const iv = vDecode.substring(0,16);
-            // const fileContent = vDecode.substring(16);
-
-            const iv = "AAAAAAAAAAAAAAAA";
-            const key = "S-C-M-MobileTeam";
-
-
-            var ciphertext = CryptoJS.AES.encrypt('This is my Message From Future..', key ,{
-                iv: iv,
-                mode: CryptoJS.mode.CBC,
-                // padding: CryptoJS.pad.ZeroPadding
-            });
-            console.log("ciphertext :",ciphertext.toString());
-
-            // Decrypt
-            const str = "bHojWVLRPsSIY6DAVBc1pY8ggYucXzMx9WpB5C9kQJpaQLxHwowaTieYIhD5+KOy"
-            var bytes = CryptoJS.AES.decrypt(ciphertext.toString(), key,{
-                iv: iv,
-                mode: CryptoJS.mode.CBC,
-                // padding: CryptoJS.pad.ZeroPadding
-            }).toString(CryptoJS.enc.Utf8);
-            // console.log("originalText :",bytes); 
-            var originalText = bytes;
-
-            console.log("originalText :",bytes); 
-
+        if (csv.downloadFileUri != null) {
+            navigation.navigate('CsvPlayer', { csv: csv })
+            console.log('hello')
+            const videoData = await RNFS.readFile(csv.downloadUrl, 'base64')
         } else {
             showToast()
         }
@@ -97,7 +70,7 @@ export default function CsvCard({ csv, onDownload, onDelete }) {
                 <TouchableOpacity onPress={cardOnPress} style={styles.cardLayout}>
                     <View>
                         <Card.Cover source={{ uri: csv.thumbnail }} style={styles.image} />
-                        {csv.downloadUrl != null && (
+                        {csv.downloadFileUri != null && (
                             <TouchableOpacity onPress={() => showConfirmDialog()} style={styles.absolute}>
                                 <MaterialCommunityIcons name="delete-circle" color="red" size={45} />
                             </TouchableOpacity>
@@ -108,7 +81,7 @@ export default function CsvCard({ csv, onDownload, onDelete }) {
                         <View style={styles.textAbsolute}>
                             <Text style={{ color: 'black' }}>{showSize} MB</Text>
                         </View>
-                        {csv.downloadUrl != null ? (
+                        {csv.downloadFileUri != null ? (
                             <View>
                                 <MaterialCommunityIcons name="check-circle" color="black" size={30} />
                             </View>

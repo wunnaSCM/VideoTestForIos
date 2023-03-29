@@ -14,18 +14,18 @@ export default function AudioCard({ audio, onDownload, onDelete }) {
     const [showSize, setShowSize] = useState()
     const { isLoading, id, percentTxt, downloading } = useContext(Context)
 
-    useEffect(() => {
-        fetch(audio.url, {
-            method: 'HEAD'
-        }).then(response => {
-            const sizeInBytes = response.headers.get('content-length');
-            const sizeInMb = sizeInBytes / (1024 * 1024);
-            setShowSize(sizeInMb.toFixed(2));
-        })
-    }, [audio.url])
+    // useEffect(() => {
+    //     fetch(audio.url, {
+    //         method: 'HEAD'
+    //     }).then(response => {
+    //         const sizeInBytes = response.headers.get('content-length');
+    //         const sizeInMb = sizeInBytes / (1024 * 1024);
+    //         setShowSize(sizeInMb.toFixed(2));
+    //     })
+    // }, [audio.url])
 
     const cardOnPress = () => {
-        if (audio.downloadUrl != null) {
+        if (audio.downloadFileUri != null) {
             navigation.navigate('AudioPlayer', { audio: audio })
         } else {
             showToast()
@@ -63,7 +63,7 @@ export default function AudioCard({ audio, onDownload, onDelete }) {
                 <TouchableOpacity onPress={cardOnPress} style={styles.cardLayout}>
                     <View>
                         <Card.Cover source={{ uri: audio.thumbnail }} />
-                        {audio.downloadUrl != null && (
+                        {audio.downloadFileUri != null && (
                             <TouchableOpacity onPress={() => showConfirmDialog()} style={styles.absolute}>
                                 <MaterialCommunityIcons name="delete-circle" color="red" size={45} />
                             </TouchableOpacity>
@@ -74,7 +74,7 @@ export default function AudioCard({ audio, onDownload, onDelete }) {
                         <View style={styles.textAbsolute}>
                             <Text style={{ color: 'black' }}>{showSize} MB</Text>
                         </View>
-                        {audio.downloadUrl != null ? (
+                        {audio.downloadFileUri != null ? (
                             <View>
                                 <MaterialCommunityIcons name="check-circle" color="black" size={30} />
                             </View>

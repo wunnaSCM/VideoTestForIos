@@ -53,39 +53,57 @@ export default function AudioFileScreen() {
         }
     }
 
-    const downloadAudio = async (url, id) => {
+    // const downloadAudio = async (url, id) => {
+
+    //     try {
+    //         const { config } = ReactNativeBlobUtil
+    //         setDownloading(true)
+    //         setId(id)
+    //         setIsLoading(true)
+    //         config({ fileCache: true, appendExt: 'mp3' })
+    //             .fetch('GET', API_URL + `/file/${id}`)
+    //             .progress((received, total) =>
+    //                 setPercentTxt(Math.round((received / total) * 100))
+    //             )
+    //             .then(async response => {
+    //                 console.log('response', response)
+
+    //                 const item = { downloadUrl: DECRYPTED_FILE_PATH }
+    //                 const index = audioArr.findIndex(obj => obj.id === id)
+
+    //                 audioArr[index] = { ...audioArr[index], ...item }
+    //                 const updated = [...audioArr, audioArr[index]]
+    //                 const removeItem = updated.slice(0, -1)
+    //                 setAudioArr(removeItem)
+    //                 await AsyncStorage.setItem('audioKeys', JSON.stringify(removeItem))
+    //                 setDownloading(false)
+    //                 setIsLoading(false)
+    //                 console.log('finish')
+
+    //             })
+    //             .catch(err => console.log(`Error ${err}`))
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+
+    //     // console.log('content', content)
+    // }
+
+    const downloadAudio = async (id) => {
 
         try {
             const { config } = ReactNativeBlobUtil
-            setDownloading(true)
             setId(id)
             setIsLoading(true)
             config({ fileCache: true, appendExt: 'mp3' })
-                .fetch('GET', API_URL + `file/${id}`)
+                .fetch('GET', API_URL + `/file/${id}`)
                 .progress((received, total) =>
                     setPercentTxt(Math.round((received / total) * 100))
                 )
                 .then(async response => {
-                    console.log('response', response)
+                    console.log('response', response.path())
 
-                    const ENCRYPTED_FILE_PATH = `${RNFS.DocumentDirectoryPath}/encryptedVideo.mp3`;
-                    const DECRYPTED_FILE_PATH = response.path()
-
-                    // Encrypt
-                    const key = '111111';
-                    const videoData = await RNFS.readFile(response.path(), 'base64');
-                    const encryptedVideoData = CryptoJS.AES.encrypt(videoData, key).toString();
-                    await RNFS.writeFile(ENCRYPTED_FILE_PATH, encryptedVideoData, 'base64');
-                    console.log(`Audio file encrypted successfully with key:`, ENCRYPTED_FILE_PATH);
-
-                    // Decrypt
-                    const encrypt = await RNFS.readFile(ENCRYPTED_FILE_PATH, 'base64');
-                    const decryptedVideoData = CryptoJS.AES.decrypt(encrypt, key).toString(CryptoJS.enc.Utf8);
-                    await RNFS.writeFile(DECRYPTED_FILE_PATH, decryptedVideoData, 'base64');
-                    console.log('Audio file decrypted successfully', DECRYPTED_FILE_PATH);
-                    console.log('original path ->', response.path())
-
-                    const item = { downloadUrl: DECRYPTED_FILE_PATH }
+                    const item = { downloadFileUri: response.path(), decryptedFilePath: `${RNFS.DocumentDirectoryPath}/${id}decryptedAudio.mp3` }
                     const index = audioArr.findIndex(obj => obj.id === id)
 
                     audioArr[index] = { ...audioArr[index], ...item }
@@ -93,7 +111,6 @@ export default function AudioFileScreen() {
                     const removeItem = updated.slice(0, -1)
                     setAudioArr(removeItem)
                     await AsyncStorage.setItem('audioKeys', JSON.stringify(removeItem))
-                    setDownloading(false)
                     setIsLoading(false)
                     console.log('finish')
 
@@ -102,19 +119,18 @@ export default function AudioFileScreen() {
         } catch (error) {
             console.log(error)
         }
-
-        // console.log('content', content)
     }
 
-    const removeAudio = async (id, url) => {
+    const removeAudio = async (id, url, decryptPath) => {
         try {
             await ReactNativeBlobUtil.fs.unlink(url)
+            await ReactNativeBlobUtil.fs.unlink(decryptPath)
             console.log('File deleted')
 
             const result = await AsyncStorage.getItem('audioKeys')
             const audioFiles = JSON.parse(result)
             const index = audioFiles.findIndex(obj => obj.id === id)
-            const item = { downloadUrl: null }
+            const item = { downloadFileUri: null, decryptedFilePath: null }
             audioFiles[index] = { ...audioFiles[index], ...item }
             console.log('inner delete', audioFiles)
             setAudioArr(audioFiles)
@@ -134,7 +150,7 @@ export default function AudioFileScreen() {
                     data={audioArr}
                     numColumns={2}
                     keyExtractor={item => item.id}
-                    renderItem={({ item }) => <AudioCard audio={item} onDownload={() => downloadAudio(item.url, item.id)} onDelete={() => removeAudio(item.id, item.url)} />}
+                    renderItem={({ item }) => <AudioCard audio={item} onDownload={() => downloadAudio(item.id)} onDelete={() => removeAudio(item.id, item.downloadFileUri, item.decryptedFilePath)} />}
                 />
             </Context.Provider>
 

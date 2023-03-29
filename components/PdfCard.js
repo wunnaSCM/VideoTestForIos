@@ -15,18 +15,18 @@ export default function PdfCard({ pdf, onDownload, onDelete }) {
     const [showSize, setShowSize] = useState()
     const { isLoading, id, percentTxt } = useContext(Context)
 
-    useEffect(() => {
-        fetch(pdf.url, {
-            method: 'HEAD'
-        }).then(response => {
-            const sizeInBytes = response.headers.get('content-length');
-            const sizeInMb = sizeInBytes / (1024 * 1024);
-            setShowSize(sizeInMb.toFixed(2));
-        })
-    }, [pdf.url])
+    // useEffect(() => {
+    //     fetch(pdf.url, {
+    //         method: 'HEAD'
+    //     }).then(response => {
+    //         const sizeInBytes = response.headers.get('content-length');
+    //         const sizeInMb = sizeInBytes / (1024 * 1024);
+    //         setShowSize(sizeInMb.toFixed(2));
+    //     })
+    // }, [pdf.url])
 
     const cardOnPress = () => {
-        if (pdf.downloadUrl != null) {
+        if (pdf.downloadFileUri != null) {
             navigation.navigate('PdfPlayer', { pdf: pdf })
         } else {
             showToast()
@@ -64,7 +64,7 @@ export default function PdfCard({ pdf, onDownload, onDelete }) {
                 <TouchableOpacity onPress={cardOnPress} style={styles.cardLayout}>
                     <View>
                         <Card.Cover source={{ uri: pdf.thumbnail }} style={styles.image} />
-                        {pdf.downloadUrl != null && (
+                        {pdf.downloadFileUri != null && (
                             <TouchableOpacity onPress={() => showConfirmDialog()} style={styles.absolute}>
                                 <MaterialCommunityIcons name="delete-circle" color="red" size={45} />
                             </TouchableOpacity>
@@ -75,7 +75,7 @@ export default function PdfCard({ pdf, onDownload, onDelete }) {
                         <View style={styles.textAbsolute}>
                             <Text style={{ color: 'black' }}>{showSize} MB</Text>
                         </View>
-                        {pdf.downloadUrl != null ? (
+                        {pdf.downloadFileUri != null ? (
                             <View>
                                 <MaterialCommunityIcons name="check-circle" color="black" size={30} />
                             </View>
