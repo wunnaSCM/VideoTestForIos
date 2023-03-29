@@ -2,17 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
-import audioData from '../../json/audioData.json'
 import ReactNativeBlobUtil from 'react-native-blob-util'
 import CryptoJS from 'crypto-js';
 import AudioCard from '../../components/AudioCard';
 import Context from '../hooks/Context';
+import { fileServices } from '../services/fileServices';
+import { API_URL } from '../util/network/config';
 
 var RNFS = require('react-native-fs');
 
 export default function AudioFileScreen() {
 
-    const [audioArr, setAudioArr] = useState(audioData)
+    const [audioArr, setAudioArr] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [id, setId] = useState()
     const [percentTxt, setPercentTxt] = useState()
@@ -20,7 +21,7 @@ export default function AudioFileScreen() {
 
 
     useEffect(() => {
-        readAudio()
+        fetchAudio()
         console.log('audioArr', audioArr)
     }, [])
 
@@ -38,6 +39,20 @@ export default function AudioFileScreen() {
         )
     };
 
+    const fetchAudio = async () => {
+        const type = 'audio'
+        const response = await fileServices(type)
+        if (response.status == "success") {
+            setAudioArr(response.data)
+        }
+
+        const result = await AsyncStorage.getItem('audioKeys')
+        const updateData = JSON.parse(result)
+        if (result !== null) {
+            setAudioArr(updateData)
+        }
+    }
+
     const downloadAudio = async (url, id) => {
 
         try {
@@ -46,7 +61,7 @@ export default function AudioFileScreen() {
             setId(id)
             setIsLoading(true)
             config({ fileCache: true, appendExt: 'mp3' })
-                .fetch('GET', url)
+                .fetch('GET', API_URL + `file/${id}`)
                 .progress((received, total) =>
                     setPercentTxt(Math.round((received / total) * 100))
                 )
@@ -110,14 +125,7 @@ export default function AudioFileScreen() {
     }
 
 
-    const readAudio = async () => {
-        const result = await AsyncStorage.getItem('audioKeys')
-        const updateData = JSON.parse(result)
 
-        if (result !== null) {
-            setAudioArr(updateData)
-        }
-    }
 
     return (
         <View style={styles.container}>

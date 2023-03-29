@@ -1,25 +1,25 @@
-import { FlatList, StyleSheet, Text, View, Image, Button } from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
-import csvData from '../../json/csvData.json'
+import Toast, { BaseToast } from 'react-native-toast-message';
 import CryptoJS from 'crypto-js';
 import ReactNativeBlobUtil from 'react-native-blob-util'
 import CsvCard from '../../components/CsvCard';
 import Context from '../hooks/Context';
+import { fileServices } from '../services/fileServices';
+import { API_URL } from '../util/network/config';
 
 var RNFS = require('react-native-fs');
 
 const CsvFileScreen = () => {
 
-    const [csvArr, setCsvArr] = useState(csvData)
+    const [csvArr, setCsvArr] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [id, setId] = useState()
     const [percentTxt, setPercentTxt] = useState()
 
-
     useEffect(() => {
-        readCsv();
+        fetchCsv();
     }, [])
 
     const toastConfigCsv = {
@@ -36,6 +36,22 @@ const CsvFileScreen = () => {
         )
     };
 
+    const fetchCsv = async () => {
+        const type = 'csv'
+        console.log("calling blah blah");
+        const response = await fileServices(type)
+        if(response.status == "success"){
+            setCsvArr(response.data)
+        }
+
+        const result = await AsyncStorage.getItem('csvKeys')
+        const updateData = JSON.parse(result)
+        if (result !== null) {
+            setCsvArr(updateData)
+        }
+        console.log('csvArr', csvArr)
+    }
+
 
     const downloadCsv = async (url, id) => {
         console.log('csvUrl', url)
@@ -45,7 +61,7 @@ const CsvFileScreen = () => {
             setId(id)
             setIsLoading(true)
             config({ fileCache: true, appendExt: 'csv' })
-                .fetch('GET', url)
+                .fetch('GET', API_URL + `file/${id}`)
                 .progress((received, total) =>
                     setPercentTxt(Math.round((received / total) * 100))
                 )
@@ -56,20 +72,21 @@ const CsvFileScreen = () => {
                     const DECRYPTED_FILE_PATH = response.path()
                     
                     // Encrypt
-                    const key = '111111';
-                    const videoData = await RNFS.readFile(response.path(), 'base64');
-                    const encryptedVideoData = CryptoJS.AES.encrypt(videoData, key).toString();
-                    await RNFS.writeFile(ENCRYPTED_FILE_PATH, encryptedVideoData, 'base64');
-                    console.log(`Csv file encrypted successfully with key:`, ENCRYPTED_FILE_PATH);
+                    // const key = '111111';
+                    // const videoData = await RNFS.readFile(response.path(), 'base64');
+                    // console.log('file', videoData)
+                    // const encryptedVideoData = CryptoJS.AES.encrypt(videoData, key).toString();
+                    // await RNFS.writeFile(ENCRYPTED_FILE_PATH, encryptedVideoData, 'base64');
+                    // console.log(`Csv file encrypted successfully with key:`, ENCRYPTED_FILE_PATH);
 
                     // Decrypt
-                    const encrypt = await RNFS.readFile(ENCRYPTED_FILE_PATH, 'base64');
-                    const decryptedVideoData = CryptoJS.AES.decrypt(encrypt, key).toString(CryptoJS.enc.Utf8);
-                    await RNFS.writeFile(DECRYPTED_FILE_PATH, decryptedVideoData, 'base64');
-                    console.log('Csv file decrypted successfully', DECRYPTED_FILE_PATH);
-                    console.log('original path ->', response.path())
+                    // const encrypt = await RNFS.readFile(ENCRYPTED_FILE_PATH, 'base64');
+                    // const decryptedVideoData = CryptoJS.AES.decrypt(encrypt, key).toString(CryptoJS.enc.Utf8);
+                    // await RNFS.writeFile(DECRYPTED_FILE_PATH, decryptedVideoData, 'base64');
+                    // console.log('Csv file decrypted successfully', DECRYPTED_FILE_PATH);
+                    // console.log('original path ->', response.path())
 
-                    const item = { downloadUrl: DECRYPTED_FILE_PATH }
+                    const item = { downloadUrl: response.path() }
                     const index = csvArr.findIndex(obj => obj.id === id)
 
                     csvArr[index] = { ...csvArr[index], ...item }
@@ -86,7 +103,6 @@ const CsvFileScreen = () => {
             console.log(error)
         }
     }
-
 
     const removeCsv = async (id, url) => {
         try {
@@ -106,28 +122,14 @@ const CsvFileScreen = () => {
         }
     }
 
-
-    const readCsv = async () => {
-        const result = await AsyncStorage.getItem('csvKeys')
-        const updateData = JSON.parse(result)
-
-        if (result !== null) {
-            setCsvArr(updateData)
-        }
-
-        console.log('csvArr', csvArr)
-    }
-
-
     return (
         <View style={styles.container}>          
-
             <Context.Provider value={{ isLoading, id, percentTxt }}>
                 <FlatList
                     data={csvArr}
                     numColumns={2}
                     keyExtractor={item => item.id}
-                    renderItem={({ item }) => <CsvCard csv={item} onDownload={() => downloadCsv(item.url, item.id)} onDelete={() => removeCsv(item.id, item.downloadUrl)} />}
+        renderItem={({ item }) => <CsvCard csv={item} onDownload={() => downloadCsv(item.url, item.id)} onDelete={() => removeCsv(item.id, item.downloadUrl)} />}
                 />
             </Context.Provider>
 

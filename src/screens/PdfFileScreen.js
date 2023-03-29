@@ -5,21 +5,22 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import CryptoJS from 'crypto-js';
 import ReactNativeBlobUtil from 'react-native-blob-util'
 import PdfCard from "../../components/PdfCard";
-import pdfData from '../../json/pdfData.json'
 import Context from "../hooks/Context";
+import { fileServices } from '../services/fileServices';
+import { API_URL } from '../util/network/config';
 
 var RNFS = require('react-native-fs');
 
 export default function PdfFileScreen() {
 
-    const [pdfArr, setPdfArr] = useState(pdfData)
+    const [pdfArr, setPdfArr] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [id, setId] = useState()
     const [percentTxt, setPercentTxt] = useState()
 
 
     useEffect(() => {
-        readPdf()
+        fetchPdf()
         console.log('pdrArr', pdfArr)
     }, [])
 
@@ -37,6 +38,21 @@ export default function PdfFileScreen() {
         )
     };
 
+    const fetchPdf = async () => {
+        const type = 'pdf'
+        const response = await fileServices(type)
+        if (response.status == "success") {
+            setPdfArr(response.data)
+        }
+
+        const result = await AsyncStorage.getItem('pdfKeys')
+        const updateData = JSON.parse(result)
+        if (result !== null) {
+            setPdfArr(updateData)
+        }
+    }
+
+
     const downloadPdf = async (url, id) => {
 
         try {
@@ -44,7 +60,7 @@ export default function PdfFileScreen() {
             setId(id)
             setIsLoading(true)
             config({ fileCache: true, appendExt: 'pdf' })
-                .fetch('GET', url)
+                .fetch('GET', API_URL + `file/${id}`)
                 .progress((received, total) =>
                     setPercentTxt(Math.round((received / total) * 100))
                 )
@@ -53,7 +69,7 @@ export default function PdfFileScreen() {
 
                     const ENCRYPTED_FILE_PATH = `${RNFS.DocumentDirectoryPath}/encryptedVideo.pdf`;
                     const DECRYPTED_FILE_PATH = response.path()
-                    
+
                     // Encrypt
                     const key = '111111';
                     const videoData = await RNFS.readFile(response.path(), 'base64');
@@ -104,17 +120,6 @@ export default function PdfFileScreen() {
             console.log('delete err', error)
         }
     }
-
-
-    const readPdf = async () => {
-        const result = await AsyncStorage.getItem('pdfKeys')
-        const updateData = JSON.parse(result)
-
-        if (result !== null) {
-            setPdfArr(updateData)
-        }
-    }
-
 
     return (
         <View>

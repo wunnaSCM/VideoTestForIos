@@ -35,12 +35,12 @@ const MovieCard = ({ movie, onDownload, onDelete, selected }) => {
     }, [percentTxt])
 
     const cardOnPress = () => {
-        // if (movie.downloadUrl != null) {
-        //     navigation.navigate('VideoPlayer', { movie: movie })
-        // } else {
-        //     showToast()
-        // }
-        navigation.navigate('VideoPlayer', { movie: movie })
+        if (movie.downloadFileUri != null) {
+            navigation.navigate('VideoPlayer', { movie: movie })
+        } else {
+            showToast()
+        }
+        // navigation.navigate('VideoPlayer', { movie: movie })
     }
 
     const showToast = () => {
@@ -79,8 +79,8 @@ const MovieCard = ({ movie, onDownload, onDelete, selected }) => {
 
                 <TouchableOpacity onPress={cardOnPress} style={styles.cardLayout}>
                     <View>
-                        <Card.Cover source={{ uri: movie.videoThumbnail }} style={styles.image} />
-                        {movie.downloadUrl != null && (
+                        <Card.Cover source={{ uri: movie.thumbnail }} style={styles.image} />
+                        {movie.downloadFileUri != null && (
                             <TouchableOpacity onPress={() => showConfirmDialog()} style={styles.absolute}>
                                 <MaterialCommunityIcons name="delete-circle" color="red" size={45} />
                             </TouchableOpacity>
@@ -91,7 +91,7 @@ const MovieCard = ({ movie, onDownload, onDelete, selected }) => {
                         <View style={styles.textAbsolute}>
                             <Text style={{ color: 'black' }}>{showSize} MB</Text>
                         </View>
-                        {movie.downloadUrl != null ? (
+                        {movie.downloadFileUri != null ? (
                             <View>
                                 <MaterialCommunityIcons name="check-circle" color="black" size={30} />
                             </View>

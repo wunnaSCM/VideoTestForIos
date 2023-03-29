@@ -5,7 +5,7 @@ import DisplayCsvDataTable from "../../components/DisplayCsvDataTable";
 export default function CsvPlayerScreen({route}) {
 
     const { csv } = route.params;
-    console.log('csvLink', csv.downloadUrl, csv.url)
+    // console.log('csvLink', csv.downloadUrl, csv.url)
     const url = csv.downloadUrl
 
     return (

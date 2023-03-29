@@ -63,7 +63,7 @@ export default function PdfCard({ pdf, onDownload, onDelete }) {
             <Card style={styles.card}>
                 <TouchableOpacity onPress={cardOnPress} style={styles.cardLayout}>
                     <View>
-                        <Card.Cover source={{ uri: 'https://picsum.photos/700' }} style={styles.image} />
+                        <Card.Cover source={{ uri: pdf.thumbnail }} style={styles.image} />
                         {pdf.downloadUrl != null && (
                             <TouchableOpacity onPress={() => showConfirmDialog()} style={styles.absolute}>
                                 <MaterialCommunityIcons name="delete-circle" color="red" size={45} />

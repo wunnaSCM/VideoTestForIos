@@ -62,7 +62,7 @@ export default function AudioCard({ audio, onDownload, onDelete }) {
             <Card style={styles.card}>
                 <TouchableOpacity onPress={cardOnPress} style={styles.cardLayout}>
                     <View>
-                        <Card.Cover source={{ uri: audio.artwork }} />
+                        <Card.Cover source={{ uri: audio.thumbnail }} />
                         {audio.downloadUrl != null && (
                             <TouchableOpacity onPress={() => showConfirmDialog()} style={styles.absolute}>
                                 <MaterialCommunityIcons name="delete-circle" color="red" size={45} />

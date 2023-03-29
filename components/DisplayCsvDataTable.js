@@ -51,7 +51,7 @@ export default function DisplayCsvDataTable(props) {
     function setTableData(csvFileUrl) {
        RNFS.readFile(csvFileUrl, 'ascii')
             .then(async (response) => {
-                console.log('response', response);
+                // console.log('response', response);
                 csv({
                     noheader: true,
                     output: "csv"

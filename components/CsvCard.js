@@ -7,7 +7,11 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Context from "../src/hooks/Context";
 import Loading from "./Loading";
+import base64 from 'react-native-base64'
+import CryptoJS from 'crypto-js';
 
+var forge = require('node-forge');
+var RNFS = require('react-native-fs');
 
 export default function CsvCard({ csv, onDownload, onDelete }) {
 
@@ -25,10 +29,38 @@ export default function CsvCard({ csv, onDownload, onDelete }) {
         })
     }, [csv.url])
 
-    const cardOnPress = () => {
+    const cardOnPress = async () => {
         if (csv.downloadUrl != null) {
-            navigation.navigate('CsvPlayer', { csv: csv })
-            console.log('hello')
+            // navigation.navigate('CsvPlayer', { csv: csv })
+            // console.log('hello')
+            // const videoData = await RNFS.readFile(csv.downloadUrl, 'base64');
+
+            // const iv = vDecode.substring(0,16);
+            // const fileContent = vDecode.substring(16);
+
+            const iv = "AAAAAAAAAAAAAAAA";
+            const key = "S-C-M-MobileTeam";
+
+
+            var ciphertext = CryptoJS.AES.encrypt('This is my Message From Future..', key ,{
+                iv: iv,
+                mode: CryptoJS.mode.CBC,
+                // padding: CryptoJS.pad.ZeroPadding
+            });
+            console.log("ciphertext :",ciphertext.toString());
+
+            // Decrypt
+            const str = "bHojWVLRPsSIY6DAVBc1pY8ggYucXzMx9WpB5C9kQJpaQLxHwowaTieYIhD5+KOy"
+            var bytes = CryptoJS.AES.decrypt(ciphertext.toString(), key,{
+                iv: iv,
+                mode: CryptoJS.mode.CBC,
+                // padding: CryptoJS.pad.ZeroPadding
+            }).toString(CryptoJS.enc.Utf8);
+            // console.log("originalText :",bytes); 
+            var originalText = bytes;
+
+            console.log("originalText :",bytes); 
+
         } else {
             showToast()
         }
@@ -64,10 +96,10 @@ export default function CsvCard({ csv, onDownload, onDelete }) {
             <Card style={styles.card}>
                 <TouchableOpacity onPress={cardOnPress} style={styles.cardLayout}>
                     <View>
-                        <Card.Cover source={{ uri: 'https://fastly.picsum.photos/id/664/200/300.jpg?grayscale&hmac=5461xvNxvOeLviXghZZZMUPdhIqR-ft1lyV8xWZAaGI' }} style={styles.image} />
+                        <Card.Cover source={{ uri: csv.thumbnail }} style={styles.image} />
                         {csv.downloadUrl != null && (
                             <TouchableOpacity onPress={() => showConfirmDialog()} style={styles.absolute}>
-                            <MaterialCommunityIcons name="delete-circle" color="red" size={45} />
+                                <MaterialCommunityIcons name="delete-circle" color="red" size={45} />
                             </TouchableOpacity>
                         )}
                     </View>
