@@ -48,7 +48,6 @@ target 'VideoTest' do
   inherit! :complete
     # Pods for testing
     pod 'RNFS', :path => '../node_modules/react-native-fs'
-    pod 'RNPDF', :path => '../node_modules/react-native-view-pdf'
     pod 'react-native-blob-util', :path => '../node_modules/react-native-blob-util'
   end
 

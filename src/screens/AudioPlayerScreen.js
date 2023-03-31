@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, StatusBar } from 'react-native';
 import Video from 'react-native-video';
 import { NavigationContainer } from '@react-navigation/native';
@@ -18,14 +18,22 @@ export default class AudioPlayerScreen extends Component {
             currentPosition: 0,
             selectedTrack: 0,
             repeatOn: false,
-            shuffleOn: false,
-            audio: 
+            shuffleOn: false, 
+            // route: this.props,
+            // audio: route.params
         };
     }
 
-    componentDidMount() {
-      console.log('testing')
-      this.decrypt()
+    decrypt = async (prop) => {
+        const encryptionKey = "S-C-M-MobileTeam"
+        const sourceFile = prop.downloadFileUri;
+        const desFile = prop.decryptedFilePath;
+        try {
+            const proms = await FileEncryptionModule.decryptFile(sourceFile, desFile, encryptionKey)
+            console.log(`${proms}`);
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     setDuration(data) {
@@ -55,31 +63,15 @@ export default class AudioPlayerScreen extends Component {
         this.refs.audioElement.seek(forwardRes);
     }
 
-    async decrypt () {
-        const encryptionKey = "S-C-M-MobileTeam"
-        const sourceFile = audio.downloadFileUri;
-        const desFile = audio.decryptedFilePath;
-
-        console.log('audio', audio)
-
-        try {
-            const proms = await FileEncryptionModule.decryptFile(sourceFile, desFile, encryptionKey)
-            console.log(`${proms}`);
-        } catch (e) {
-            console.error(e);
-        }
-
-       
-    }
-
-
     render() {
         const { route } = this.props
         const { audio } = route.params
         const { navigation } = this.props;
 
+        const customAudio = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
 
-
+        this.decrypt(audio)
+        
         const track = audio.decryptedFilePath[this.state.selectedTrack];
         const video = this.state.isChanging ? null : (
             <Video
@@ -101,7 +93,7 @@ export default class AudioPlayerScreen extends Component {
             <View style={styles.container}>
                 <StatusBar hidden={true} />
                 <Header message="Playing From Charts" onDownPress={() => navigation.goBack()} />
-                <AlbumArt url={audio.artwork} />
+                <AlbumArt url={audio.thumbnail} />
                 <TrackDetails title={audio.title} />
                 <SeekBar
                     onSeek={this.seek.bind(this)}
@@ -123,11 +115,158 @@ export default class AudioPlayerScreen extends Component {
                 />
                 {video}
 
-
+            
             </View>
         );
     }
 }
+
+
+// export default function AudioPlayerScreen({ route }) {
+
+//     const { audio } = route.params;
+
+//     const [paused, setPaused] = useState(true)
+//     const [totalLength, setTotalLength] = useState(1)
+//     const [currentPosition, setCurrentPosition] = useState(0)
+//     const [selectedTrack, setSelectedTrack] = useState(0)
+//     const [repeatOn, setRepeatOn] = useState(false)
+//     const [shuffleOn, setShuffleOn] = useState(false)
+//     const [isChanging, setIsChanging] = useState(false)
+
+//     const audioRef = useRef(audio.decryptedFilePath)
+
+//     useEffect(() => {
+//         decrypt()
+//         console.log('audio path', audio.decryptedFilePath)   
+//     }, [])
+
+
+//     const decrypt = async () => {
+
+//         const encryptionKey = "S-C-M-MobileTeam"
+//         const sourceFile = audio.downloadFileUri;
+//         const desFile = audio.decryptedFilePath;
+//         try {
+//             const proms = await FileEncryptionModule.decryptFile(sourceFile, desFile, encryptionKey)
+//             console.log(`${proms}`);
+//         } catch (e) {
+//             console.error(e);
+//         }
+//     }
+
+//     const handleLength = (data) => {
+//         setTotalLength(Math.floor(data.duration))
+//     }
+
+//     const handleTime = (data) => {
+//         setCurrentPosition(Math.floor(data.currentTime))
+//     }
+
+//     const handleSeek = (time) => {
+//         //         this.refs.audioElement && this.refs.audioElement.seek(time);
+//         //         this.setState({
+//         //             currentPosition: time,
+//         //             paused: false,
+//         //         });
+//         time = Math.round(time);
+//         // audioRef.current && audioRef.current.handleSeek(time)
+//         audio.decryptedFilePath.onSeek(time)
+//         setCurrentPosition(time)
+//         setPaused(false)
+//     }
+
+//     const handlePaused = () => {
+//         setPaused(false)
+//     }
+
+//     const onBack = () => {
+//         if (currentPosition < 10 && selectedTrack > 0) {
+//             setIsChanging(true)
+//             setTimeout(() => {
+//                 setCurrentPosition(0)
+//                 setPaused(false)
+//                 setTotalLength(1)
+//                 setIsChanging(false)
+//                 setSelectedTrack(selectedTrack - 1)
+//             }, 0)
+//         } else {
+//             setCurrentPosition(0)
+//         }
+//     }
+
+//     const onForward = () => {
+//         if (selectedTrack < audioArr.length - 1) {
+//             setIsChanging(true)
+//             setTimeout(() => {
+//                 setCurrentPosition(0)
+//                 setPaused(false)
+//                 setTotalLength(1)
+//                 setIsChanging(false)
+//                 setSelectedTrack(selectedTrack + 1)
+//             }, 0)
+//         }
+//     }
+
+//     const video = isChanging ? null : (
+//         <Video
+//             source={{ uri: audio.decryptedFilePath }}
+//             // useRef="audioElement"
+//             ref={audioRef}
+//             paused={paused}
+//             resizeMode="cover"
+//             repeat={true}
+//             // onLoadStart={loadStart} 
+//             onLoad={handleLength}
+//             onProgress={handleTime}
+//             // onEnd={onEnd}        
+//             // onError={videoError}    
+//             style={styles.audioElement}
+//         />
+//     )
+
+
+
+//     // handleChange = e => this.setState({currentItem: e.target.value})
+//     // const handleChange = e => setCurrentItem(e.target.value)
+
+
+//     return (
+//         <View style={styles.container}>
+//             <StatusBar hidden={true} />
+//             <Header message="Playing From Charts" />
+//             <AlbumArt />
+//             <TrackDetails title={audio.title} />
+//             <SeekBar
+//                 onSeek={handleSeek}
+//                 trackLength={totalLength}
+//                 onSlidingStart={handlePaused}
+//                 currentPosition={currentPosition}
+//             />
+//             <Controls
+//                 onPressRepeat={() => setRepeatOn(!repeatOn)}
+//                 repeatOn={repeatOn}
+//                 shuffleOn={shuffleOn}
+//                 forwardDisabled={selectedTrack === audio.decryptedFilePath.length - 1}
+//                 onPressShuffle={() => setShuffleOn(!shuffleOn)}
+//                 onPressPlay={() => {
+//                     setPaused(false);
+//                     // audioRef.current.setPaused(false);
+//                     }}
+//                 onPressPause={() => {
+//                     setPaused(true);
+//                     // audioRef.current.setPaused(true);
+//                     }}
+//                 onBack={onBack}
+//                 onForward={onForward}
+//                 paused={paused}
+//             />
+//             {video}
+
+
+//         </View>
+//     )
+// }
 
 
 

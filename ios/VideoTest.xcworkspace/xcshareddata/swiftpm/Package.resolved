@@ -1,0 +1,23 @@
+{
+  "pins" : [
+    {
+      "identity" : "bmhcrypto",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/muhasturk/BMHCrypto.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "3659ad565c3f74609fec4c3526587616563c4abe"
+      }
+    },
+    {
+      "identity" : "cryptoswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/krzyzanowskim/CryptoSwift.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "06213b594fcae0f827ab58ee9397d3520f9d1ded"
+      }
+    }
+  ],
+  "version" : 2
+}

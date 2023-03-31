@@ -20,12 +20,14 @@ export default function CsvPlayerScreen({ route }) {
 
         try {
             const proms = await FileEncryptionModule.decryptFile(sourceFile, desFile, encryptionKey)
-            setIsDecrypted(true)
+            // setIsDecrypted(true)
             console.log(`${proms}`);
         } catch (e) {
             console.error(e);
         }
     }
+
+
 
     return (
         <View style={styles.container}>

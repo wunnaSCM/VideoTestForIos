@@ -8,10 +8,17 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* VideoTestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* VideoTestTests.m */; };
-		0C80B921A6F3F58F76C31292 /* libPods-VideoTest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-VideoTest.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		268E823229D676E1006E4BC0 /* libCryptoSwift.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 268E823129D676E1006E4BC0 /* libCryptoSwift.a */; };
+		268E823429D6771C006E4BC0 /* FileEncryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26C7AD3F29D584EE00AFE2AC /* FileEncryption.swift */; };
+		26C7AD3829D54E7500AFE2AC /* Counter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26C7AD3729D54E7500AFE2AC /* Counter.swift */; };
+		26C7AD3A29D54F3B00AFE2AC /* Counter.m in Sources */ = {isa = PBXBuildFile; fileRef = 26C7AD3929D54F3B00AFE2AC /* Counter.m */; };
+		26C7AD4029D584EE00AFE2AC /* FileEncryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26C7AD3F29D584EE00AFE2AC /* FileEncryption.swift */; };
+		26C7AD4229D5852100AFE2AC /* FileEncryption.m in Sources */ = {isa = PBXBuildFile; fileRef = 26C7AD4129D5852100AFE2AC /* FileEncryption.m */; };
+		26D4FB0729D6CA3000A6ACAE /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 26D4FB0629D6CA3000A6ACAE /* CryptoSwift */; };
+		26D4FB0D29D6D12000A6ACAE /* BMHCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = 26D4FB0C29D6D12000A6ACAE /* BMHCrypto */; };
 		7699B88040F8A987B510C191 /* libPods-VideoTest-VideoTestTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-VideoTest-VideoTestTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
@@ -37,6 +44,8 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = VideoTest/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = VideoTest/main.m; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-VideoTest-VideoTestTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-VideoTest-VideoTestTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		268E822F29D6766C006E4BC0 /* libCryptoSwift.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libCryptoSwift.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		268E823129D676E1006E4BC0 /* libCryptoSwift.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libCryptoSwift.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		26A3162229C2F870000DA910 /* Entypo.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Entypo.ttf; sourceTree = "<group>"; };
 		26A3162329C2F884000DA910 /* EvilIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = EvilIcons.ttf; sourceTree = "<group>"; };
 		26A3162429C2F88B000DA910 /* Feather.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Feather.ttf; sourceTree = "<group>"; };
@@ -52,6 +61,13 @@
 		26A3162E29C2F8CB000DA910 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SimpleLineIcons.ttf; sourceTree = "<group>"; };
 		26A3162F29C2F8D1000DA910 /* Zocial.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Zocial.ttf; sourceTree = "<group>"; };
 		26A3163029C2F8D6000DA910 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome5_Brands.ttf; sourceTree = "<group>"; };
+		26C7AD3729D54E7500AFE2AC /* Counter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Counter.swift; sourceTree = "<group>"; };
+		26C7AD3929D54F3B00AFE2AC /* Counter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Counter.m; sourceTree = "<group>"; };
+		26C7AD3F29D584EE00AFE2AC /* FileEncryption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileEncryption.swift; sourceTree = "<group>"; };
+		26C7AD4129D5852100AFE2AC /* FileEncryption.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FileEncryption.m; sourceTree = "<group>"; };
+		26D4FAFB29D6BBFF00A6ACAE /* libCryptoSwift.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libCryptoSwift.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		26D4FB0129D6C5C400A6ACAE /* libCryptoSwift.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libCryptoSwift.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		26D4FB0329D6C5D300A6ACAE /* libCryptoSwift.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libCryptoSwift.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B4392A12AC88292D35C810B /* Pods-VideoTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VideoTest.debug.xcconfig"; path = "Target Support Files/Pods-VideoTest/Pods-VideoTest.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-VideoTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VideoTest.release.xcconfig"; path = "Target Support Files/Pods-VideoTest/Pods-VideoTest.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-VideoTest-VideoTestTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VideoTest-VideoTestTests.debug.xcconfig"; path = "Target Support Files/Pods-VideoTest-VideoTestTests/Pods-VideoTest-VideoTestTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -66,6 +82,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				268E823229D676E1006E4BC0 /* libCryptoSwift.a in Frameworks */,
 				7699B88040F8A987B510C191 /* libPods-VideoTest-VideoTestTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -74,7 +91,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C80B921A6F3F58F76C31292 /* libPods-VideoTest.a in Frameworks */,
+				26D4FB0729D6CA3000A6ACAE /* CryptoSwift in Frameworks */,
+				26D4FB0D29D6D12000A6ACAE /* BMHCrypto in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -136,6 +154,11 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				26D4FB0329D6C5D300A6ACAE /* libCryptoSwift.a */,
+				26D4FB0129D6C5C400A6ACAE /* libCryptoSwift.a */,
+				26D4FAFB29D6BBFF00A6ACAE /* libCryptoSwift.a */,
+				268E823129D676E1006E4BC0 /* libCryptoSwift.a */,
+				268E822F29D6766C006E4BC0 /* libCryptoSwift.a */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				5DCACB8F33CDC322A6C60F78 /* libPods-VideoTest.a */,
 				19F6CBCC0A4E27FBF8BF4A61 /* libPods-VideoTest-VideoTestTests.a */,
@@ -153,6 +176,10 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				26C7AD4129D5852100AFE2AC /* FileEncryption.m */,
+				26C7AD3F29D584EE00AFE2AC /* FileEncryption.swift */,
+				26C7AD3929D54F3B00AFE2AC /* Counter.m */,
+				26C7AD3729D54E7500AFE2AC /* Counter.swift */,
 				26A3161F29C2F7D1000DA910 /* Fonts */,
 				13B07FAE1A68108700A75B9A /* VideoTest */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -228,6 +255,10 @@
 			dependencies = (
 			);
 			name = VideoTest;
+			packageProductDependencies = (
+				26D4FB0629D6CA3000A6ACAE /* CryptoSwift */,
+				26D4FB0C29D6D12000A6ACAE /* BMHCrypto */,
+			);
 			productName = VideoTest;
 			productReference = 13B07F961A680F5B00A75B9A /* VideoTest.app */;
 			productType = "com.apple.product-type.application";
@@ -242,10 +273,11 @@
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
+						LastSwiftMigration = 1420;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1420;
 					};
 				};
 			};
@@ -258,6 +290,10 @@
 				Base,
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
+			packageReferences = (
+				26D4FB0529D6CA3000A6ACAE /* XCRemoteSwiftPackageReference "CryptoSwift" */,
+				26D4FB0B29D6D12000A6ACAE /* XCRemoteSwiftPackageReference "BMHCrypto" */,
+			);
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -442,6 +478,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				268E823429D6771C006E4BC0 /* FileEncryption.swift in Sources */,
 				00E356F31AD99517003FC87E /* VideoTestTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -450,8 +487,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				26C7AD3A29D54F3B00AFE2AC /* Counter.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
+				26C7AD4229D5852100AFE2AC /* FileEncryption.m in Sources */,
+				26C7AD4029D584EE00AFE2AC /* FileEncryption.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				26C7AD3829D54E7500AFE2AC /* Counter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -470,8 +511,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5B7EB9410499542E8C5724F5 /* Pods-VideoTest-VideoTestTests.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -490,6 +532,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "VideoTestTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VideoTest.app/VideoTest";
 			};
 			name = Debug;
@@ -498,8 +543,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 89C6BE57DB24E9ADA2F236DE /* Pods-VideoTest-VideoTestTests.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = VideoTestTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
@@ -515,6 +561,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "VideoTestTests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VideoTest.app/VideoTest";
 			};
 			name = Release;
@@ -523,6 +571,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3B4392A12AC88292D35C810B /* Pods-VideoTest.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -533,6 +582,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift$(inherited)";
 				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -541,6 +591,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.scm.videoTest;
 				PRODUCT_NAME = VideoTest;
+				SWIFT_OBJC_BRIDGING_HEADER = "VideoTest-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -551,6 +602,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5709B34CF0A7D63546082F79 /* Pods-VideoTest.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -560,6 +612,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift$(inherited)";
 				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -568,6 +621,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.scm.videoTest;
 				PRODUCT_NAME = VideoTest;
+				SWIFT_OBJC_BRIDGING_HEADER = "VideoTest-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -607,6 +661,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
+				"FRAMEWORK_SEARCH_PATHS[arch=*]" = "$(SRCROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -622,7 +677,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -679,6 +734,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
+				"FRAMEWORK_SEARCH_PATHS[arch=*]" = "$(SRCROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -687,7 +743,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -741,6 +797,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		26D4FB0529D6CA3000A6ACAE /* XCRemoteSwiftPackageReference "CryptoSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/krzyzanowskim/CryptoSwift.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		26D4FB0B29D6D12000A6ACAE /* XCRemoteSwiftPackageReference "BMHCrypto" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/muhasturk/BMHCrypto.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		26D4FB0629D6CA3000A6ACAE /* CryptoSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 26D4FB0529D6CA3000A6ACAE /* XCRemoteSwiftPackageReference "CryptoSwift" */;
+			productName = CryptoSwift;
+		};
+		26D4FB0C29D6D12000A6ACAE /* BMHCrypto */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 26D4FB0B29D6D12000A6ACAE /* XCRemoteSwiftPackageReference "BMHCrypto" */;
+			productName = BMHCrypto;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 83CBB9F71A601CBA00E9B192 /* Project object */;
 }
