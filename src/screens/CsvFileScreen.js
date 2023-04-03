@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text, View, SafeAreaView, NativeModules} from 'react-native';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast, { BaseToast } from 'react-native-toast-message';
@@ -10,6 +10,7 @@ import { fileServices } from '../services/fileServices';
 import { API_URL } from '../util/network/config';
 import Loading from '../../components/Loading';
 
+
 var RNFS = require('react-native-fs');
 
 const CsvFileScreen = () => {
@@ -18,6 +19,8 @@ const CsvFileScreen = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [id, setId] = useState()
     const [percentTxt, setPercentTxt] = useState()
+
+    const { Counter } = NativeModules
 
     useEffect(() => {
         fetchCsv();
@@ -61,12 +64,13 @@ const CsvFileScreen = () => {
             setIsLoading(true)
             config({ fileCache: true, appendExt: 'csv' })
                 .fetch('GET', API_URL + `/file/${id}`)
-                .progress((received, total) =>
-                    setPercentTxt(Math.round((received / total) * 100))
-                )
+                .progress((received, total) => {
+                    const idAndPercentage = { id: id, percent: Math.round((received / total) * 100) };
+                    setPercentTxt(idAndPercentage)
+                })
                 .then(async response => {
                     console.log('response', response.path())
-
+                    
                     const item = { downloadFileUri: response.path(), decryptedFilePath: `${RNFS.DocumentDirectoryPath}/${id}decryptedCsv.csv` }
                     const index = csvArr.findIndex(obj => obj.id === id)
 
@@ -106,7 +110,7 @@ const CsvFileScreen = () => {
     }
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <Context.Provider value={{ isLoading, id, percentTxt }}>
                 <FlatList
                     data={csvArr}
@@ -118,7 +122,7 @@ const CsvFileScreen = () => {
 
             <Toast config={toastConfigCsv} />
 
-        </View>
+        </SafeAreaView>
     )
 }
 

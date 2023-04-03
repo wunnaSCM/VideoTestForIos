@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList } from 'react-native'
+import { View, Text, StyleSheet, FlatList, SafeAreaView } from 'react-native'
 import Toast, { BaseToast } from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CryptoJS from 'crypto-js';
@@ -54,30 +54,30 @@ export default function PdfFileScreen() {
 
 
     const downloadPdf = async (id) => {
-
         try {
-            const { config } = ReactNativeBlobUtil
-            setId(id)
             setIsLoading(true)
+            const { config } = ReactNativeBlobUtil
+
             config({ fileCache: true, appendExt: 'pdf' })
                 .fetch('GET', API_URL + `/file/${id}`)
-                .progress((received, total) =>
-                    setPercentTxt(Math.round((received / total) * 100))
-                )
+                .progress((received, total) => {
+                    const idAndPercentage = { id: id, percent: Math.round((received / total) * 100) };
+                    setPercentTxt(idAndPercentage)
+                })
                 .then(async response => {
                     console.log('response', response.path())
 
-                    const item = { downloadFileUri: response.path(), decryptedFilePath: `${RNFS.DocumentDirectoryPath}/${id}decryptedPdf.pdf` }
+                    const item = { downloadFileUri: response.path(), decryptedFilePath: `${RNFS.DocumentDirectoryPath}/${id}decryptedVideo.pdf` }
                     const index = pdfArr.findIndex(obj => obj.id === id)
 
                     pdfArr[index] = { ...pdfArr[index], ...item }
                     const updated = [...pdfArr, pdfArr[index]]
                     const removeItem = updated.slice(0, -1)
                     setPdfArr(removeItem)
+
                     await AsyncStorage.setItem('pdfKeys', JSON.stringify(removeItem))
                     setIsLoading(false)
                     console.log('finish')
-
                 })
                 .catch(err => console.log(`Error ${err}`))
         } catch (error) {
@@ -106,7 +106,7 @@ export default function PdfFileScreen() {
     }
 
     return (
-        <View>
+        <SafeAreaView>
 
             <Context.Provider value={{ isLoading, id, percentTxt }}>
                 <FlatList
@@ -119,7 +119,7 @@ export default function PdfFileScreen() {
 
             <Toast config={toastConfigPdf} />
 
-        </View>
+        </SafeAreaView>
     )
 }
 

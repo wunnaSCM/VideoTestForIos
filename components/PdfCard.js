@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, SafeAreaView } from 'react-native'
 import { Card } from 'react-native-paper';
 import { useNavigation } from "@react-navigation/native";
 import Toast from 'react-native-toast-message';
@@ -7,27 +7,34 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Context from "../src/hooks/Context";
 import Loading from "./Loading";
+import { API_URL } from "../src/util/network/config";
+import CryptoJS from 'crypto-js';
 
+var forge = require('node-forge');
+var RNFS = require('react-native-fs');
 
 export default function PdfCard({ pdf, onDownload, onDelete }) {
 
     const navigation = useNavigation();
     const [showSize, setShowSize] = useState()
     const { isLoading, id, percentTxt } = useContext(Context)
+    const [downloadPercent, setDownloadPercent] = useState(0)
 
-    // useEffect(() => {
-    //     fetch(pdf.url, {
-    //         method: 'HEAD'
-    //     }).then(response => {
-    //         const sizeInBytes = response.headers.get('content-length');
-    //         const sizeInMb = sizeInBytes / (1024 * 1024);
-    //         setShowSize(sizeInMb.toFixed(2));
-    //     })
-    // }, [pdf.url])
+    useEffect(() => {
+        fetch(API_URL + `/file/${pdf.id}`, {
+            method: 'HEAD'
+        }).then(response => {
+            const sizeInBytes = response.headers.get('content-length');
+            const sizeInMb = sizeInBytes / (1024 * 1024);
+            setShowSize(sizeInMb.toFixed(2));
+        })
+    }, [pdf.url])
 
-    const cardOnPress = () => {
+    const cardOnPress = async () => {
         if (pdf.downloadFileUri != null) {
-            navigation.navigate('PdfPlayer', { pdf: pdf })
+            navigation.navigate('PdfPlayer', {pdf : pdf })
+            console.log('hello')
+            const videoData = await RNFS.readFile(pdf.downloadUrl, 'base64')
         } else {
             showToast()
         }
@@ -36,7 +43,7 @@ export default function PdfCard({ pdf, onDownload, onDelete }) {
     const showToast = () => {
         Toast.show({
             type: 'success',
-            text1: 'Pdf file is not downloaded',
+            text1: 'PDF file is not downloaded',
         });
     }
 
@@ -59,7 +66,7 @@ export default function PdfCard({ pdf, onDownload, onDelete }) {
     };
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <Card style={styles.card}>
                 <TouchableOpacity onPress={cardOnPress} style={styles.cardLayout}>
                     <View>
@@ -85,7 +92,6 @@ export default function PdfCard({ pdf, onDownload, onDelete }) {
                             }
                             }>
                                 <MaterialIcon name="file-download" size={30} color="black" />
-
                             </TouchableOpacity>
                         )}
                     </Card.Actions>
@@ -95,7 +101,7 @@ export default function PdfCard({ pdf, onDownload, onDelete }) {
                     id == pdf.id && isLoading == true ? (
                         <View style={styles.loadingLayout}>
                             <Loading />
-                            <Text style={styles.loadingText}>{percentTxt} %</Text>
+                            <Text style={styles.loadingText}>{downloadPercent} %</Text>
                             <Text style={styles.loadingText}>Downloading... </Text>
                         </View>
                     ) : (
@@ -104,7 +110,7 @@ export default function PdfCard({ pdf, onDownload, onDelete }) {
                 }
 
             </Card>
-        </View>
+        </SafeAreaView>
     )
 }
 

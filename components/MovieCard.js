@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Alert, StyleSheet, TouchableOpacity, Text, Button, Image } from 'react-native';
+import { View, Alert, StyleSheet, TouchableOpacity, Text, Button, Image, SafeAreaView } from 'react-native';
 import { Card } from 'react-native-paper';
 import Toast from 'react-native-toast-message';
 import { useNavigation } from "@react-navigation/native";
@@ -22,7 +22,6 @@ const MovieCard = ({ movie, onDownload, onDelete, selected }) => {
         fetch(API_URL + `/file/${movie.id}`, {
             method: 'HEAD'
         }).then(response => {
-            // console.log('res', response);
             const sizeInBytes = response.headers.get('content-length');
             const sizeInMb = sizeInBytes / (1024 * 1024);
             setShowSize(sizeInMb.toFixed(2));
@@ -79,7 +78,7 @@ const MovieCard = ({ movie, onDownload, onDelete, selected }) => {
     };
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <Card style={styles.card}>
 
                 <TouchableOpacity onPress={cardOnPress} style={styles.cardLayout}>
@@ -124,7 +123,7 @@ const MovieCard = ({ movie, onDownload, onDelete, selected }) => {
                 }
 
             </Card>
-        </View>
+        </SafeAreaView>
     )
 }
 

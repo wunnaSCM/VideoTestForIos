@@ -1,4 +1,4 @@
-import { Alert, FlatList, StyleSheet, View } from 'react-native';
+import { Alert, FlatList, StyleSheet, View, SafeAreaView } from 'react-native';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast, { BaseToast } from 'react-native-toast-message';
@@ -131,7 +131,7 @@ const HomeScreen = () => {
     }
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
 
             <Context.Provider value={{ id, percentTxt, selectedItems }}>
                 <FlatList
@@ -144,7 +144,7 @@ const HomeScreen = () => {
 
             <Toast config={toastConfig} />
 
-        </View>
+        </SafeAreaView>
     )
 }
 

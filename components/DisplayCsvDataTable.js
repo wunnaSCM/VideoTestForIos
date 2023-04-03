@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, SafeAreaView } from 'react-native';
 import csv from 'csvtojson';
 import { DataTable } from 'react-native-paper';
 var RNFS = require('react-native-fs');
@@ -75,7 +75,7 @@ export default function DisplayCsvDataTable(props) {
     }
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <DataTable>
                 <DataTable.Header>
                     {
@@ -106,7 +106,7 @@ export default function DisplayCsvDataTable(props) {
                     optionsLabel={'Rows per page'}
                 />
             </DataTable>
-        </View>
+        </SafeAreaView>
     );
 };
 const styles = StyleSheet.create({

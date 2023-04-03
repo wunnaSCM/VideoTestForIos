@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet, FlatList, SafeAreaView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 import ReactNativeBlobUtil from 'react-native-blob-util'
@@ -53,42 +53,6 @@ export default function AudioFileScreen() {
         }
     }
 
-    // const downloadAudio = async (url, id) => {
-
-    //     try {
-    //         const { config } = ReactNativeBlobUtil
-    //         setDownloading(true)
-    //         setId(id)
-    //         setIsLoading(true)
-    //         config({ fileCache: true, appendExt: 'mp3' })
-    //             .fetch('GET', API_URL + `/file/${id}`)
-    //             .progress((received, total) =>
-    //                 setPercentTxt(Math.round((received / total) * 100))
-    //             )
-    //             .then(async response => {
-    //                 console.log('response', response)
-
-    //                 const item = { downloadUrl: DECRYPTED_FILE_PATH }
-    //                 const index = audioArr.findIndex(obj => obj.id === id)
-
-    //                 audioArr[index] = { ...audioArr[index], ...item }
-    //                 const updated = [...audioArr, audioArr[index]]
-    //                 const removeItem = updated.slice(0, -1)
-    //                 setAudioArr(removeItem)
-    //                 await AsyncStorage.setItem('audioKeys', JSON.stringify(removeItem))
-    //                 setDownloading(false)
-    //                 setIsLoading(false)
-    //                 console.log('finish')
-
-    //             })
-    //             .catch(err => console.log(`Error ${err}`))
-    //     } catch (error) {
-    //         console.log(error)
-    //     }
-
-    //     // console.log('content', content)
-    // }
-
     const downloadAudio = async (id) => {
 
         try {
@@ -97,9 +61,10 @@ export default function AudioFileScreen() {
             setIsLoading(true)
             config({ fileCache: true, appendExt: 'mp3' })
                 .fetch('GET', API_URL + `/file/${id}`)
-                .progress((received, total) =>
-                    setPercentTxt(Math.round((received / total) * 100))
-                )
+                .progress((received, total) => {
+                    const idAndPercentage = { id: id, percent: Math.round((received / total) * 100) };
+                    setPercentTxt(idAndPercentage)
+                })
                 .then(async response => {
                     console.log('response', response.path())
 
@@ -144,7 +109,7 @@ export default function AudioFileScreen() {
 
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <Context.Provider value={{ isLoading, id, percentTxt, downloading }}>
                 <FlatList
                     data={audioArr}
@@ -155,7 +120,7 @@ export default function AudioFileScreen() {
             </Context.Provider>
 
             <Toast config={toastConfigAudio} />
-        </View>
+        </SafeAreaView>
     );
 }
 

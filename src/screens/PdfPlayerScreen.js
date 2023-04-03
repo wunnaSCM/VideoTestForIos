@@ -1,29 +1,35 @@
-import { StyleSheet, Text, View, Dimensions } from 'react-native'
+import { StyleSheet, Text, View, Dimensions, NativeModules, SafeAreaView, Platform } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Pdf from 'react-native-pdf';
-import FileEncryptionModule from '../modules/FileEncryptionModule';
+import Loading from '../../components/Loading';
 
 
 const PdfPlayerScreen = ({ route }) => {
 
     const { pdf } = route.params;
     const [isDecrypted, setIsDecrypted] = useState(false)
-    const source = { uri: pdf.decryptedFilePath, cache: true };
+    //const source = { uri: pdf.downloadFileUri, cache: true};
+    const source = { uri: "http://samples.leanpub.com/thereactnativebook-sample.pdf", cache: true }
+
+    const { Counter } = NativeModules
+    const { FileEncryptionModule } = NativeModules
 
     useEffect(() => {
         decrypt()
+        console.log('link', pdf.decryptedFilePath, pdf.downloadFileUri)
     }, [])
 
     const decrypt = async () => {
         const encryptionKey = "S-C-M-MobileTeam"
         const sourceFile = pdf.downloadFileUri;
         const desFile = pdf.decryptedFilePath;
-
-        console.log(pdf)
         try {
-            const proms = await FileEncryptionModule.decryptFile(sourceFile, desFile, encryptionKey)
+            if (Platform.OS == 'android') {
+                const proms = await FileEncryptionModule.decryptFile(sourceFile, desFile, encryptionKey)
+            } else if (Platform.OS == 'ios') {
+                const proms = await Counter.increment(sourceFile, desFile, encryptionKey)
+            }
             setIsDecrypted(true)
-            console.log(`${proms}`);
         } catch (e) {
             console.error(e);
         }
@@ -31,30 +37,54 @@ const PdfPlayerScreen = ({ route }) => {
 
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             {
-               isDecrypted && (
-                    <Pdf
-                        trustAllCerts={false}
-                        source={source}
-                        onLoadComplete={(numberOfPages, filePath) => {
-                            console.log(`number of pages: ${numberOfPages}`);
-                        }}
-                        onPageChanged={(page, numberOfPages) => {
-                            console.log(`current page: ${page}`);
-                        }}
-                        onError={(error) => {
-                            console.log(error);
-                        }}
-                        onPressLink={(uri) => {
-                            console.log(`Link pressed: ${uri}`)
-                        }}
-                        style={styles.pdf}
-                    />
+                isDecrypted ? (
+                    <>
+                        <Pdf
+                            trustAllCerts={false}
+                            source={{ uri: pdf.decryptedFilePath, cache: true }}
+                            onLoadComplete={(numberOfPages, filePath) => {
+                                console.log(`number of pages: ${numberOfPages}`);
+                            }}
+                            onPageChanged={(page, numberOfPages) => {
+                                console.log(`current page: ${page}`);
+                            }}
+                            onError={(error) => {
+                                console.log(error);
+                            }}
+                            onPressLink={(uri) => {
+                                console.log(`Link pressed: ${uri}`)
+                            }}
+                            style={styles.pdf}
+                        />
+                    </>
+                ) : (
+                    <Loading />
                 )
             }
 
-        </View>
+
+            {/* <Pdf
+                trustAllCerts={false}
+                source={{ uri: pdf.decryptedFilePath, cache: true }}
+                onLoadComplete={(numberOfPages, filePath) => {
+                    console.log(`number of pages: ${numberOfPages}`);
+                }}
+                onPageChanged={(page, numberOfPages) => {
+                    console.log(`current page: ${page}`);
+                }}
+                onError={(error) => {
+                    console.log(error);
+                }}
+                onPressLink={(uri) => {
+                    console.log(`Link pressed: ${uri}`)
+                }}
+                style={styles.pdf}
+            /> */}
+
+
+        </SafeAreaView>
     );
 }
 

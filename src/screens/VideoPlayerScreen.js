@@ -1,7 +1,9 @@
-import { StyleSheet, Text, View, Dimensions, Button, Platform, NativeModules } from 'react-native'
+import { StyleSheet, Text, View, Dimensions, Button, Platform, NativeModules, SafeAreaView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Video from 'react-native-video'
 import FileEncryptionModule from '../modules/FileEncryptionModule';
+import Loading from '../../components/Loading';
+
 
 var RNFS = require('react-native-fs');
 
@@ -11,14 +13,14 @@ const { width, height } = Dimensions.get('window');
 const VideoPlayerScreen = ({ route, navigation }) => {
 
     const { movie } = route.params;
-    const { isDecrypted, setIsDecrypted } = useState(false)
+    const [isDecrypted, setIsDecrypted] = useState(false)
 
-    const {FileEncryption} = NativeModules
+    const { FileEncryptionModule } = NativeModules
+    const { Counter } = NativeModules
 
     useEffect(() => {
-       decrypt()
+        decrypt()
     }, [])
-
 
     function back() {
         const { goBack } = navigation
@@ -31,14 +33,13 @@ const VideoPlayerScreen = ({ route, navigation }) => {
         const sourceFile = movie.downloadFileUri;
         const desFile = movie.decryptedFilePath;
         try {
-            if (Platform.OS === "android") {
+            if (Platform.OS == 'android') {
                 const proms = await FileEncryptionModule.decryptFile(sourceFile, desFile, encryptionKey)
-            } else if (Platform.OS === "ios") {
-                console.log('decrypt file ios')
-                const proms = await FileEncryption.decrypt(sourceFile, desFile, encryptionKey)
+            } else if (Platform.OS == 'ios') {
+                const proms = await Counter.increment(sourceFile, desFile, encryptionKey)
             }
             setIsDecrypted(true)
-            console.log(`${proms}`);
+            console.log('video decrypted')
         } catch (e) {
             console.error(e);
         }
@@ -46,15 +47,30 @@ const VideoPlayerScreen = ({ route, navigation }) => {
 
 
     return (
-        <View style={styles.container}>
-            <Video
+        <SafeAreaView style={styles.container}>
+            {
+                isDecrypted ? (
+                    <Video
+                        source={{ uri: movie.decryptedFilePath }}
+                        paused={false}
+                        repeat={true}
+                        style={styles.mediaPlayer}
+                        controls={true}
+                    />
+                ) : (
+                    <Loading />
+                )
+            }
+
+            {/* <Video
                 source={{ uri: movie.decryptedFilePath }}
                 paused={false}
                 repeat={true}
                 style={styles.mediaPlayer}
                 controls={true}
-            />
-        </View>
+            /> */}
+
+        </SafeAreaView>
     )
 }
 

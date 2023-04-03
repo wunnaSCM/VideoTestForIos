@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React, { useEffect, useState, useMe } from "react";
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, NativeModules, Platform } from 'react-native';
 import DisplayCsvDataTable from "../../components/DisplayCsvDataTable";
-import FileEncryptionModule from "../modules/FileEncryptionModule";
+import Loading from "../../components/Loading";
 
 export default function CsvPlayerScreen({ route }) {
 
     const { csv } = route.params;
     const [isDecrypted, setIsDecrypted] = useState(false)
+
+    const { FileEncryptionModule } = NativeModules
+    const { Counter } = NativeModules
+
 
     useEffect(() => {
         decrypt()
@@ -19,9 +23,12 @@ export default function CsvPlayerScreen({ route }) {
         console.log('csv', csv)
 
         try {
-            const proms = await FileEncryptionModule.decryptFile(sourceFile, desFile, encryptionKey)
-            // setIsDecrypted(true)
-            console.log(`${proms}`);
+            if (Platform.OS == 'android') {
+                const proms = await FileEncryptionModule.decryptFile(sourceFile, desFile, encryptionKey)
+            } else if (Platform.OS == 'ios') {
+                const proms = await Counter.increment(sourceFile, desFile, encryptionKey)
+            }
+            setIsDecrypted(true)
         } catch (e) {
             console.error(e);
         }
@@ -30,15 +37,21 @@ export default function CsvPlayerScreen({ route }) {
 
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             {
-                isDecrypted && (
+                isDecrypted ? (
                     <ScrollView>
                         <DisplayCsvDataTable numItemsPerPage={10} csvFileUrl={csv.decryptedFilePath} />
                     </ScrollView>
+                ) : (
+                    <Loading />
                 )
             }
-        </View>
+
+            {/* <ScrollView>
+                <DisplayCsvDataTable numItemsPerPage={10} csvFileUrl={csv.decryptedFilePath} />
+            </ScrollView> */}
+        </SafeAreaView>
     )
 }
 

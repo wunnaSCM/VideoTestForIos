@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, SafeAreaView } from 'react-native'
 import { Card } from 'react-native-paper';
 import { useNavigation } from "@react-navigation/native";
 import Toast from 'react-native-toast-message';
@@ -7,22 +7,24 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Context from "../src/hooks/Context";
 import Loading from "./Loading";
+import { API_URL } from "../src/util/network/config";
 
 export default function AudioCard({ audio, onDownload, onDelete }) {
 
     const navigation = useNavigation();
     const [showSize, setShowSize] = useState()
     const { isLoading, id, percentTxt, downloading } = useContext(Context)
+    const [downloadPercent, setDownloadPercent] = useState(0)
 
-    // useEffect(() => {
-    //     fetch(audio.url, {
-    //         method: 'HEAD'
-    //     }).then(response => {
-    //         const sizeInBytes = response.headers.get('content-length');
-    //         const sizeInMb = sizeInBytes / (1024 * 1024);
-    //         setShowSize(sizeInMb.toFixed(2));
-    //     })
-    // }, [audio.url])
+    useEffect(() => {
+        fetch(API_URL + `/file/${audio.id}`, {
+            method: 'HEAD'
+        }).then(response => {
+            const sizeInBytes = response.headers.get('content-length');
+            const sizeInMb = sizeInBytes / (1024 * 1024);
+            setShowSize(sizeInMb.toFixed(2));
+        })
+    }, [audio.url])
 
     const cardOnPress = () => {
         if (audio.downloadFileUri != null) {
@@ -58,7 +60,7 @@ export default function AudioCard({ audio, onDownload, onDelete }) {
     };
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <Card style={styles.card}>
                 <TouchableOpacity onPress={cardOnPress} style={styles.cardLayout}>
                     <View>
@@ -105,7 +107,7 @@ export default function AudioCard({ audio, onDownload, onDelete }) {
                     id == audio.id && isLoading == true ? (
                         <View style={styles.loadingLayout}>
                             <Loading />
-                            <Text style={styles.loadingText}>{percentTxt} %</Text>
+                            <Text style={styles.loadingText}>{downloadPercent} %</Text>
                             <Text style={styles.loadingText}>Downloading... </Text>
                         </View>
                     ) : (
@@ -114,7 +116,7 @@ export default function AudioCard({ audio, onDownload, onDelete }) {
                 }
 
             </Card>
-        </View>
+        </SafeAreaView>
     )
 }
 

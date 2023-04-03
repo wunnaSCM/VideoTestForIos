@@ -1,5 +1,5 @@
 import React, { Component, useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, StatusBar, NativeModules, SafeAreaView, Platform } from 'react-native';
 import Video from 'react-native-video';
 import { NavigationContainer } from '@react-navigation/native';
 import AlbumArt from '../../components/audio/AlbumArt';
@@ -7,7 +7,7 @@ import Header from '../../components/audio/Header';
 import Controls from '../../components/audio/Controls';
 import SeekBar from '../../components/audio/SeekBar';
 import TrackDetails from '../../components/audio/TrackDetails';
-import FileEncryptionModule from '../modules/FileEncryptionModule';
+import Loading from '../../components/Loading';
 
 export default class AudioPlayerScreen extends Component {
     constructor(props) {
@@ -18,19 +18,36 @@ export default class AudioPlayerScreen extends Component {
             currentPosition: 0,
             selectedTrack: 0,
             repeatOn: false,
-            shuffleOn: false, 
+            shuffleOn: false,
+            isDecrypted: false
             // route: this.props,
             // audio: route.params
         };
     }
 
+    componentDidMount() {
+        this.decrypt();
+        console.log('decrypting audio')
+    }
+
+
     decrypt = async (prop) => {
         const encryptionKey = "S-C-M-MobileTeam"
         const sourceFile = prop.downloadFileUri;
         const desFile = prop.decryptedFilePath;
+        const { Counter } = NativeModules;
+        const { FileEncryptionModule } = NativeModules
+
         try {
-            const proms = await FileEncryptionModule.decryptFile(sourceFile, desFile, encryptionKey)
-            console.log(`${proms}`);
+            if (Platform.OS == 'android') {
+                const proms = await FileEncryptionModule.decryptFile(sourceFile, desFile, encryptionKey)
+            } else if (Platform.OS == 'ios') {
+                const proms = await Counter.increment(sourceFile, desFile, encryptionKey)
+            }
+            this.setState({
+                isDecrypted: true
+            })
+            console.log("finish decrypt javascript")
         } catch (e) {
             console.error(e);
         }
@@ -71,7 +88,7 @@ export default class AudioPlayerScreen extends Component {
         const customAudio = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
 
         this.decrypt(audio)
-        
+
         const track = audio.decryptedFilePath[this.state.selectedTrack];
         const video = this.state.isChanging ? null : (
             <Video
@@ -90,33 +107,33 @@ export default class AudioPlayerScreen extends Component {
         );
 
         return (
-            <View style={styles.container}>
-                <StatusBar hidden={true} />
-                <Header message="Playing From Charts" onDownPress={() => navigation.goBack()} />
-                <AlbumArt url={audio.thumbnail} />
-                <TrackDetails title={audio.title} />
-                <SeekBar
-                    onSeek={this.seek.bind(this)}
-                    trackLength={this.state.totalLength}
-                    onSlidingStart={() => this.setState({ paused: true })}
-                    currentPosition={this.state.currentPosition}
-                />
-                <Controls
-                    onPressRepeat={() => this.setState({ repeatOn: !this.state.repeatOn })}
-                    repeatOn={this.state.repeatOn}
-                    shuffleOn={this.state.shuffleOn}
-                    forwardDisabled={this.state.selectedTrack === audio.decryptedFilePath.length - 1}
-                    onPressShuffle={() => this.setState({ shuffleOn: !this.state.shuffleOn })}
-                    onPressPlay={() => this.setState({ paused: false })}
-                    onPressPause={() => this.setState({ paused: true })}
-                    onBack={this.onBack.bind(this)}
-                    onForward={this.onForward.bind(this)}
-                    paused={this.state.paused}
-                />
-                {video}
-
-            
-            </View>
+            <SafeAreaView style={styles.container}>
+                <View>
+                    <StatusBar hidden={true} />
+                    <Header message="Playing From Charts" onDownPress={() => navigation.goBack()} />
+                    <AlbumArt url={audio.thumbnail} />
+                    <TrackDetails title={audio.title} />
+                    <SeekBar
+                        onSeek={this.seek.bind(this)}
+                        trackLength={this.state.totalLength}
+                        onSlidingStart={() => this.setState({ paused: true })}
+                        currentPosition={this.state.currentPosition}
+                    />
+                    <Controls
+                        onPressRepeat={() => this.setState({ repeatOn: !this.state.repeatOn })}
+                        repeatOn={this.state.repeatOn}
+                        shuffleOn={this.state.shuffleOn}
+                        forwardDisabled={this.state.selectedTrack === audio.decryptedFilePath.length - 1}
+                        onPressShuffle={() => this.setState({ shuffleOn: !this.state.shuffleOn })}
+                        onPressPlay={() => this.setState({ paused: false })}
+                        onPressPause={() => this.setState({ paused: true })}
+                        onBack={this.onBack.bind(this)}
+                        onForward={this.onForward.bind(this)}
+                        paused={this.state.paused}
+                    />
+                    {video}
+                </View>
+            </SafeAreaView>
         );
     }
 }

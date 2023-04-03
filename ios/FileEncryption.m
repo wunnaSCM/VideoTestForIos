@@ -12,11 +12,11 @@
  @interface RCT_EXTERN_MODULE(FileEncryption, NSObject)
 
  RCT_EXTERN_METHOD(
-     decrypt: (NSString *)sourceFile
-     desFile:(NSString *)desFile
-     key:(NSString *)key
-     resolver: (RCTPromiseResolveBlock)resolve
-     rejecter:(RCTPromiseRejectBlock)reject
+  decryptFile: (NSURL *)sourceFile
+  desFile:(NSURL *)desFile
+  key:(NSString *)key
+  resolve: (RCTPromiseResolveBlock)resolve
+  rejecter:(RCTPromiseRejectBlock)reject
  )
 
  @end
