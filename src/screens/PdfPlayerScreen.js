@@ -60,30 +60,11 @@ const PdfPlayerScreen = ({ route }) => {
                         />
                     </>
                 ) : (
+                    <View style={styles.loading}>
                     <Loading />
+                    </View>
                 )
             }
-
-
-            {/* <Pdf
-                trustAllCerts={false}
-                source={{ uri: pdf.decryptedFilePath, cache: true }}
-                onLoadComplete={(numberOfPages, filePath) => {
-                    console.log(`number of pages: ${numberOfPages}`);
-                }}
-                onPageChanged={(page, numberOfPages) => {
-                    console.log(`current page: ${page}`);
-                }}
-                onError={(error) => {
-                    console.log(error);
-                }}
-                onPressLink={(uri) => {
-                    console.log(`Link pressed: ${uri}`)
-                }}
-                style={styles.pdf}
-            /> */}
-
-
         </SafeAreaView>
     );
 }
@@ -104,5 +85,10 @@ const styles = StyleSheet.create({
         flex: 1,
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height,
+    },
+    loading: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
     }
 })

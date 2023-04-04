@@ -1,13 +1,11 @@
 import { Alert, FlatList, StyleSheet, View, SafeAreaView } from 'react-native';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Toast, { BaseToast } from 'react-native-toast-message';
 import MovieCard from '../../components/MovieCard';
-import CryptoJS from 'crypto-js';
 import ReactNativeBlobUtil from 'react-native-blob-util'
 import Context from '../hooks/Context';
 import { fileServices } from '../services/fileServices';
-import { API_URL } from '../util/network/config';
+import { API_URL } from '../utils/network/config';
 
 var RNFS = require('react-native-fs');
 
@@ -29,19 +27,6 @@ const HomeScreen = () => {
         console.log('select item =>', selectedItems)
     }, [selectedItems])
 
-    const toastConfig = {
-        success: (props) => (
-            <BaseToast
-                {...props}
-                style={{ borderLeftColor: 'brown' }}
-                contentContainerStyle={{ paddingHorizontal: 15 }}
-                text1Style={{
-                    fontSize: 15,
-                    fontWeight: '400'
-                }}
-            />
-        )
-    };
 
     const getSelected = item => selectedItems.includes(item.id);
 
@@ -72,11 +57,9 @@ const HomeScreen = () => {
         }
     }
 
-    const downloadVideo = async (id, url) => {
-        console.log('url', url);
+    const downloadVideo = async (id) => {
         try {
             const { config } = ReactNativeBlobUtil
-
             config({ fileCache: true, appendExt: 'mp4' })
                 .fetch('GET', API_URL + `/file/${id}`)
                 .progress((received, total) => {
@@ -86,8 +69,7 @@ const HomeScreen = () => {
                 .then(async response => {
                     console.log('response', response.path())
 
-                    const item = { downloadFileUri: response.path(), decryptedFilePath: `${RNFS.DocumentDirectoryPath}/${id}decryptedVideo.mp4` }
-                    // const item = {downloadFileUri: response.path()}
+                    const item = { downloadFileUri: response.path(), decryptedFilePath: `${RNFS.DocumentDirectoryPath}/${id}decryptedVideo.mp4`}
                     const index = movieArr.findIndex(obj => obj.id === id)
 
                     movieArr[index] = { ...movieArr[index], ...item }
@@ -109,18 +91,20 @@ const HomeScreen = () => {
         }
     }
 
-    const removeItem = async (id, url, decryptPath) => {
+    const removeItem = async (item) => {
+        const url = item.downloadFileUri
+        const decryptPath = item.decryptedFilePath
         try {
-            console.log('delete url', url)
-            await ReactNativeBlobUtil.fs.unlink(url)
-            await ReactNativeBlobUtil.fs.unlink(decryptPath)
+            console.log('delete url', item)
+            ReactNativeBlobUtil.fs.unlink(url)
+            ReactNativeBlobUtil.fs.unlink(decryptPath)
             console.log('File deleted')
 
             const result = await AsyncStorage.getItem('keys')
             const movies = JSON.parse(result)
-            const index = movies.findIndex(obj => obj.id === id)
-            const item = { downloadFileUri: null, decryptedFilePath: null }
-            movies[index] = { ...movies[index], ...item }
+            const index = movies.findIndex(obj => obj.id === item.id)
+            const deleteItem = { downloadFileUri: null, decryptedFilePath: null }
+            movies[index] = { ...movies[index], ...deleteItem }
             console.log('inner delete', movies)
             setMovieArr(movies)
             await AsyncStorage.setItem('keys', JSON.stringify(movies))
@@ -138,11 +122,9 @@ const HomeScreen = () => {
                     data={movieArr}
                     numColumns={2}
                     keyExtractor={item => item.id}
-                    renderItem={({ item }) => <MovieCard movie={item} onDownload={() => selectItemsToDownload(item)} onDelete={() => removeItem(item.id, item.downloadFileUri, item.decryptedFilePath)} selected={getSelected(item)} item={item} />}
+                    renderItem={({ item }) => <MovieCard movie={item} onDownload={() => selectItemsToDownload(item)} onDelete={() => removeItem(item)} selected={getSelected(item)} item={item} />}
                 />
             </Context.Provider>
-
-            <Toast config={toastConfig} />
 
         </SafeAreaView>
     )

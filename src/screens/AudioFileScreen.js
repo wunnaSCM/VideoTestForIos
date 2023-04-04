@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, SafeAreaView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 import ReactNativeBlobUtil from 'react-native-blob-util'
-import CryptoJS from 'crypto-js';
 import AudioCard from '../../components/AudioCard';
 import Context from '../hooks/Context';
 import { fileServices } from '../services/fileServices';
-import { API_URL } from '../util/network/config';
+import { API_URL } from '../utils/network/config';
 
 var RNFS = require('react-native-fs');
 
@@ -25,19 +23,6 @@ export default function AudioFileScreen() {
         console.log('audioArr', audioArr)
     }, [])
 
-    const toastConfigAudio = {
-        success: (props) => (
-            <BaseToast
-                {...props}
-                style={{ borderLeftColor: 'brown' }}
-                contentContainerStyle={{ paddingHorizontal: 15 }}
-                text1Style={{
-                    fontSize: 15,
-                    fontWeight: '400'
-                }}
-            />
-        )
-    };
 
     const fetchAudio = async () => {
         const type = 'audio'
@@ -86,17 +71,19 @@ export default function AudioFileScreen() {
         }
     }
 
-    const removeAudio = async (id, url, decryptPath) => {
+    const removeAudio = async (item) => {
+        const url = item.downloadFileUri
+        const decryptPath = item.decryptedFilePath
         try {
-            await ReactNativeBlobUtil.fs.unlink(url)
-            await ReactNativeBlobUtil.fs.unlink(decryptPath)
+            ReactNativeBlobUtil.fs.unlink(url)
+            ReactNativeBlobUtil.fs.unlink(decryptPath)
             console.log('File deleted')
 
             const result = await AsyncStorage.getItem('audioKeys')
             const audioFiles = JSON.parse(result)
-            const index = audioFiles.findIndex(obj => obj.id === id)
-            const item = { downloadFileUri: null, decryptedFilePath: null }
-            audioFiles[index] = { ...audioFiles[index], ...item }
+            const index = audioFiles.findIndex(obj => obj.id === item.id)
+            const deleteItem = { downloadFileUri: null, decryptedFilePath: null }
+            audioFiles[index] = { ...audioFiles[index], ...deleteItem }
             console.log('inner delete', audioFiles)
             setAudioArr(audioFiles)
             await AsyncStorage.setItem('audioKeys', JSON.stringify(audioFiles))
@@ -106,8 +93,6 @@ export default function AudioFileScreen() {
     }
 
 
-
-
     return (
         <SafeAreaView style={styles.container}>
             <Context.Provider value={{ isLoading, id, percentTxt, downloading }}>
@@ -115,11 +100,9 @@ export default function AudioFileScreen() {
                     data={audioArr}
                     numColumns={2}
                     keyExtractor={item => item.id}
-                    renderItem={({ item }) => <AudioCard audio={item} onDownload={() => downloadAudio(item.id)} onDelete={() => removeAudio(item.id, item.downloadFileUri, item.decryptedFilePath)} />}
+                    renderItem={({ item }) => <AudioCard audio={item} onDownload={() => downloadAudio(item.id)} onDelete={() => removeAudio(item)} />}
                 />
             </Context.Provider>
-
-            <Toast config={toastConfigAudio} />
         </SafeAreaView>
     );
 }

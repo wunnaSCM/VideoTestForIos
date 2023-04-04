@@ -1,7 +1,6 @@
 import React, { Component, useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, StatusBar, NativeModules, SafeAreaView, Platform } from 'react-native';
 import Video from 'react-native-video';
-import { NavigationContainer } from '@react-navigation/native';
 import AlbumArt from '../../components/audio/AlbumArt';
 import Header from '../../components/audio/Header';
 import Controls from '../../components/audio/Controls';
@@ -20,8 +19,6 @@ export default class AudioPlayerScreen extends Component {
             repeatOn: false,
             shuffleOn: false,
             isDecrypted: false
-            // route: this.props,
-            // audio: route.params
         };
     }
 
@@ -90,7 +87,7 @@ export default class AudioPlayerScreen extends Component {
         this.decrypt(audio)
 
         const track = audio.decryptedFilePath[this.state.selectedTrack];
-        const video = this.state.isChanging ? null : (
+        const video = (
             <Video
                 source={{ uri: audio.decryptedFilePath }}
                 ref="audioElement"
@@ -104,35 +101,44 @@ export default class AudioPlayerScreen extends Component {
                 onError={this.videoError}
                 style={styles.audioElement}
             />
-        );
+        )
 
         return (
             <SafeAreaView style={styles.container}>
-                <View>
-                    <StatusBar hidden={true} />
-                    <Header message="Playing From Charts" onDownPress={() => navigation.goBack()} />
-                    <AlbumArt url={audio.thumbnail} />
-                    <TrackDetails title={audio.title} />
-                    <SeekBar
-                        onSeek={this.seek.bind(this)}
-                        trackLength={this.state.totalLength}
-                        onSlidingStart={() => this.setState({ paused: true })}
-                        currentPosition={this.state.currentPosition}
-                    />
-                    <Controls
-                        onPressRepeat={() => this.setState({ repeatOn: !this.state.repeatOn })}
-                        repeatOn={this.state.repeatOn}
-                        shuffleOn={this.state.shuffleOn}
-                        forwardDisabled={this.state.selectedTrack === audio.decryptedFilePath.length - 1}
-                        onPressShuffle={() => this.setState({ shuffleOn: !this.state.shuffleOn })}
-                        onPressPlay={() => this.setState({ paused: false })}
-                        onPressPause={() => this.setState({ paused: true })}
-                        onBack={this.onBack.bind(this)}
-                        onForward={this.onForward.bind(this)}
-                        paused={this.state.paused}
-                    />
-                    {video}
-                </View>
+                {
+                    this.state.isDecrypted ? (
+                        <View>
+                            <StatusBar hidden={true} />
+                            <Header message="Playing From Charts" onDownPress={() => navigation.goBack()} />
+                            <AlbumArt url={audio.thumbnail} />
+                            <TrackDetails title={audio.title} />
+                            <SeekBar
+                                onSeek={this.seek.bind(this)}
+                                trackLength={this.state.totalLength}
+                                onSlidingStart={() => this.setState({ paused: true })}
+                                currentPosition={this.state.currentPosition}
+                            />
+                            <Controls
+                                onPressRepeat={() => this.setState({ repeatOn: !this.state.repeatOn })}
+                                repeatOn={this.state.repeatOn}
+                                shuffleOn={this.state.shuffleOn}
+                                forwardDisabled={this.state.selectedTrack === audio.decryptedFilePath.length - 1}
+                                onPressShuffle={() => this.setState({ shuffleOn: !this.state.shuffleOn })}
+                                onPressPlay={() => this.setState({ paused: false })}
+                                onPressPause={() => this.setState({ paused: true })}
+                                onBack={this.onBack.bind(this)}
+                                onForward={this.onForward.bind(this)}
+                                paused={this.state.paused}
+                            />
+                            {video}
+                        </View>
+                    ) : (
+                        <View style={styles.loading}>
+                            <Loading />
+                        </View>
+                    )
+                }
+
             </SafeAreaView>
         );
     }
@@ -296,5 +302,10 @@ const styles = StyleSheet.create({
     audioElement: {
         height: 0,
         width: 0,
+    },
+    loading: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
     }
 });

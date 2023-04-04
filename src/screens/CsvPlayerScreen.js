@@ -44,13 +44,12 @@ export default function CsvPlayerScreen({ route }) {
                         <DisplayCsvDataTable numItemsPerPage={10} csvFileUrl={csv.decryptedFilePath} />
                     </ScrollView>
                 ) : (
-                    <Loading />
+                    <View style={styles.loading}>
+                        <Loading />
+                    </View>
                 )
             }
 
-            {/* <ScrollView>
-                <DisplayCsvDataTable numItemsPerPage={10} csvFileUrl={csv.decryptedFilePath} />
-            </ScrollView> */}
         </SafeAreaView>
     )
 }
@@ -59,5 +58,12 @@ export default function CsvPlayerScreen({ route }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    }, 
+
+    loading: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
     }
+
 })

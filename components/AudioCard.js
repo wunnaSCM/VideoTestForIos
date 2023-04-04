@@ -7,7 +7,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Context from "../src/hooks/Context";
 import Loading from "./Loading";
-import { API_URL } from "../src/util/network/config";
+import { API_URL } from "../src/utils/network/config";
 
 export default function AudioCard({ audio, onDownload, onDelete }) {
 
@@ -25,6 +25,12 @@ export default function AudioCard({ audio, onDownload, onDelete }) {
             setShowSize(sizeInMb.toFixed(2));
         })
     }, [audio.url])
+
+    useEffect(() => {
+        if (percentTxt && percentTxt.id == audio.id) {
+            setDownloadPercent(percentTxt.percent);
+        }
+    }, [percentTxt])
 
     const cardOnPress = () => {
         if (audio.downloadFileUri != null) {

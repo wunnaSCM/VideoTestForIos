@@ -7,8 +7,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Context from "../src/hooks/Context";
 import Loading from "./Loading";
-import { API_URL } from "../src/util/network/config";
-import CryptoJS from 'crypto-js';
+import { API_URL } from "../src/utils/network/config";
 
 var forge = require('node-forge');
 var RNFS = require('react-native-fs');
@@ -29,6 +28,12 @@ export default function CsvCard({ csv, onDownload, onDelete }) {
             setShowSize(sizeInMb.toFixed(2));
         })
     }, [csv.url])
+
+    useEffect(() => {
+        if (percentTxt && percentTxt.id == csv.id) {
+            setDownloadPercent(percentTxt.percent);
+        }
+    }, [percentTxt])
 
     const cardOnPress = async () => {
         if (csv.downloadFileUri != null) {

@@ -1,15 +1,11 @@
 import { FlatList, StyleSheet, Text, View, SafeAreaView, NativeModules} from 'react-native';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Toast, { BaseToast } from 'react-native-toast-message';
-import CryptoJS from 'crypto-js';
 import ReactNativeBlobUtil from 'react-native-blob-util'
 import CsvCard from '../../components/CsvCard';
 import Context from '../hooks/Context';
 import { fileServices } from '../services/fileServices';
-import { API_URL } from '../util/network/config';
-import Loading from '../../components/Loading';
-
+import { API_URL } from '../utils/network/config';
 
 var RNFS = require('react-native-fs');
 
@@ -20,25 +16,11 @@ const CsvFileScreen = () => {
     const [id, setId] = useState()
     const [percentTxt, setPercentTxt] = useState()
 
-    const { Counter } = NativeModules
 
     useEffect(() => {
         fetchCsv();
     }, [])
 
-    const toastConfigCsv = {
-        success: (props) => (
-            <BaseToast
-                {...props}
-                style={{ borderLeftColor: 'brown' }}
-                contentContainerStyle={{ paddingHorizontal: 15 }}
-                text1Style={{
-                    fontSize: 15,
-                    fontWeight: '400'
-                }}
-            />
-        )
-    };
 
     const fetchCsv = async () => {
         const type = 'csv'
@@ -89,24 +71,27 @@ const CsvFileScreen = () => {
         }
     }
 
-    const removeCsv = async (id, url, decryptPath) => {
-        console.log(id, url, decryptPath)
+    const removeCsv = async (item) => {
+        console.log('delete item -> ', item.id)
+        const url = item.downloadFileUri
+        const decryptPath = item.decryptedFilePath
         try {
-            await ReactNativeBlobUtil.fs.unlink(url)
-            await ReactNativeBlobUtil.fs.unlink(decryptPath)
+            ReactNativeBlobUtil.fs.unlink(url)
+            ReactNativeBlobUtil.fs.unlink(decryptPath)
             console.log('File deleted')
 
             const result = await AsyncStorage.getItem('csvKeys')
-            const csvFiles = JSON.parse(result)
-            const index = csvFiles.findIndex(obj => obj.id === id)
-            const item = { downloadFileUri: null, decryptedFilePath: null }
-            csvFiles[index] = { ...csvFiles[index], ...item }
-            console.log('inner delete', csvFiles)
-            setCsvArr(csvFiles)
-            await AsyncStorage.setItem('csvKeys', JSON.stringify(csvFiles))
+            const csvs = JSON.parse(result)
+            const index = csvs.findIndex(obj => obj.id === item.id)
+            const deleteItem = { downloadFileUri: null, decryptedFilePath: null}
+            csvs[index] = { ...csvs[index], ...deleteItem }
+            console.log('inner delete', csvs)
+            setCsvArr(csvs)
+            await AsyncStorage.setItem('csvKeys', JSON.stringify(csvs))
         } catch (error) {
             console.log('delete err', error)
         }
+
     }
 
     return (
@@ -116,11 +101,9 @@ const CsvFileScreen = () => {
                     data={csvArr}
                     numColumns={2}
                     keyExtractor={item => item.id}
-                    renderItem={({ item }) => <CsvCard csv={item} onDownload={() => downloadCsv(item.id)} onDelete={() => removeCsv(item.id, item.downloadFileUri, item.decryptedFilePath)} />}
+                    renderItem={({ item }) => <CsvCard csv={item} onDownload={() => downloadCsv(item.id)} onDelete={() => removeCsv(item)} />}
                 />
             </Context.Provider>
-
-            <Toast config={toastConfigCsv} />
 
         </SafeAreaView>
     )

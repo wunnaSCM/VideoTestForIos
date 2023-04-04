@@ -1,19 +1,15 @@
 import React from "react";
-import { View, Text } from "react-native";
 import StackNavigator from "./src/navigation/StackNavigator";
-import TestNativeModulesIos from "./src/screens/TestNativeModuleIos";
-
-
-
-
+import Toast from 'react-native-toast-message';
+import { toastMessage } from "./src/utils/toastMessage";
 
 
 export default function App() {
 
     return (
         <>
-            <StackNavigator />     
-           {/* <TestNativeModulesIos /> */}
+            <StackNavigator />
+            <Toast config={toastMessage} />
         </>
     );
 }

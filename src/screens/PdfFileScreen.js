@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList, SafeAreaView } from 'react-native'
-import Toast, { BaseToast } from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import CryptoJS from 'crypto-js';
 import ReactNativeBlobUtil from 'react-native-blob-util'
 import PdfCard from "../../components/PdfCard";
 import Context from "../hooks/Context";
 import { fileServices } from '../services/fileServices';
-import { API_URL } from '../util/network/config';
+import { API_URL } from '../utils/network/config';
 
 var RNFS = require('react-native-fs');
 
@@ -21,27 +19,13 @@ export default function PdfFileScreen() {
 
     useEffect(() => {
         fetchPdf()
-        console.log('pdrArr', pdfArr)
     }, [])
-
-    const toastConfigPdf = {
-        success: (props) => (
-            <BaseToast
-                {...props}
-                style={{ borderLeftColor: 'brown' }}
-                contentContainerStyle={{ paddingHorizontal: 15 }}
-                text1Style={{
-                    fontSize: 15,
-                    fontWeight: '400'
-                }}
-            />
-        )
-    };
 
     const fetchPdf = async () => {
         const type = 'pdf'
         const response = await fileServices(type)
         if (response.status == "success") {
+            console.log('response data', response.data)
             setPdfArr(response.data)
         }
 
@@ -50,14 +34,15 @@ export default function PdfFileScreen() {
         if (result !== null) {
             setPdfArr(updateData)
         }
+        console.log('pdf result =>', pdfArr)
     }
 
 
     const downloadPdf = async (id) => {
         try {
-            setIsLoading(true)
             const { config } = ReactNativeBlobUtil
-
+            setId(id)
+            setIsLoading(true)
             config({ fileCache: true, appendExt: 'pdf' })
                 .fetch('GET', API_URL + `/file/${id}`)
                 .progress((received, total) => {
@@ -67,7 +52,7 @@ export default function PdfFileScreen() {
                 .then(async response => {
                     console.log('response', response.path())
 
-                    const item = { downloadFileUri: response.path(), decryptedFilePath: `${RNFS.DocumentDirectoryPath}/${id}decryptedVideo.pdf` }
+                    const item = { downloadFileUri: response.path(), decryptedFilePath: `${RNFS.DocumentDirectoryPath}/${id}decryptedPdf.pdf` }
                     const index = pdfArr.findIndex(obj => obj.id === id)
 
                     pdfArr[index] = { ...pdfArr[index], ...item }
@@ -85,24 +70,27 @@ export default function PdfFileScreen() {
         }
     }
 
-    const removePdf = async (id, url, decryptPath) => {
-        console.log(id, url, decryptPath)
+    const removePdf = async (item) => {
+        console.log('delete item -> ', item.id)
+        const url = item.downloadFileUri
+        const decryptPath = item.decryptedFilePath
         try {
-            await ReactNativeBlobUtil.fs.unlink(url)
-            await ReactNativeBlobUtil.fs.unlink(decryptPath)
+            const resUrl = ReactNativeBlobUtil.fs.unlink(url)
+            const resPath = ReactNativeBlobUtil.fs.unlink(decryptPath)
             console.log('File deleted')
 
             const result = await AsyncStorage.getItem('pdfKeys')
             const pdfs = JSON.parse(result)
-            const index = pdfs.findIndex(obj => obj.id === id)
-            const item = { downloadFileUri: null, decryptedFilePath: null }
-            pdfs[index] = { ...pdfs[index], ...item }
+            const index = pdfs.findIndex(obj => obj.id === item.id)
+            const deleteItem = { downloadFileUri: null, decryptedFilePath: null}
+            pdfs[index] = { ...pdfs[index], ...deleteItem }
             console.log('inner delete', pdfs)
             setPdfArr(pdfs)
             await AsyncStorage.setItem('pdfKeys', JSON.stringify(pdfs))
         } catch (error) {
             console.log('delete err', error)
         }
+
     }
 
     return (
@@ -113,11 +101,9 @@ export default function PdfFileScreen() {
                     data={pdfArr}
                     numColumns={2}
                     keyExtractor={item => item.id}
-                    renderItem={({ item }) => <PdfCard pdf={item} onDownload={() => downloadPdf(item.id)} onDelete={() => removePdf(item.id, item.downloadFileUri, item.decryptedFilePath)} />}
+                    renderItem={({ item }) => <PdfCard pdf={item} onDownload={() => downloadPdf(item.id)} onDelete={() => removePdf(item)} />}
                 />
             </Context.Provider>
-
-            <Toast config={toastConfigPdf} />
 
         </SafeAreaView>
     )

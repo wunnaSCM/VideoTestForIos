@@ -7,7 +7,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Loading from "./Loading";
 import Context from "../src/hooks/Context";
-import { API_URL } from "../src/util/network/config";
+import { API_URL } from "../src/utils/network/config";
 
 
 const MovieCard = ({ movie, onDownload, onDelete, selected }) => {
@@ -34,9 +34,6 @@ const MovieCard = ({ movie, onDownload, onDelete, selected }) => {
         }
     }, [percentTxt])
 
-    useEffect(() => {
-        console.log('movie percent', movie.id)
-    }, [])
 
     const cardOnPress = () => {
         if (movie.downloadFileUri != null) {
@@ -44,7 +41,6 @@ const MovieCard = ({ movie, onDownload, onDelete, selected }) => {
         } else {
             showToast()
         }
-        // navigation.navigate('VideoPlayer', { movie: movie })
     }
 
     const showToast = () => {
