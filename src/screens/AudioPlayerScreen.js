@@ -27,8 +27,14 @@ export default class AudioPlayerScreen extends Component {
         console.log('decrypting audio')
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.isDecrypted != this.state.isDecrypted ) {
+            this.decrypt()
+        }
+    }
 
     decrypt = async (prop) => {
+        console.log('props', prop.downloadFileUri)
         const encryptionKey = "S-C-M-MobileTeam"
         const sourceFile = prop.downloadFileUri;
         const desFile = prop.decryptedFilePath;
@@ -44,7 +50,7 @@ export default class AudioPlayerScreen extends Component {
             this.setState({
                 isDecrypted: true
             })
-            console.log("finish decrypt javascript")
+            // console.log("finish decrypt javascript", this.state.isDecrypted)
         } catch (e) {
             console.error(e);
         }
@@ -73,6 +79,7 @@ export default class AudioPlayerScreen extends Component {
     }
 
     onForward() {
+        console.log('forward')
         const forwardRes = this.state.currentPosition + 15
         this.refs.audioElement.seek(forwardRes);
     }
@@ -86,7 +93,6 @@ export default class AudioPlayerScreen extends Component {
 
         this.decrypt(audio)
 
-        const track = audio.decryptedFilePath[this.state.selectedTrack];
         const video = (
             <Video
                 source={{ uri: audio.decryptedFilePath }}
@@ -138,6 +144,32 @@ export default class AudioPlayerScreen extends Component {
                         </View>
                     )
                 }
+
+                {/* <View>
+                    <StatusBar hidden={true} />
+                    <Header message="Playing From Charts" onDownPress={() => navigation.goBack()} />
+                    <AlbumArt url={audio.thumbnail} />
+                    <TrackDetails title={audio.title} />
+                    <SeekBar
+                        onSeek={this.seek.bind(this)}
+                        trackLength={this.state.totalLength}
+                        onSlidingStart={() => this.setState({ paused: true })}
+                        currentPosition={this.state.currentPosition}
+                    />
+                    <Controls
+                        onPressRepeat={() => this.setState({ repeatOn: !this.state.repeatOn })}
+                        repeatOn={this.state.repeatOn}
+                        shuffleOn={this.state.shuffleOn}
+                        forwardDisabled={this.state.selectedTrack === audio.decryptedFilePath.length - 1}
+                        onPressShuffle={() => this.setState({ shuffleOn: !this.state.shuffleOn })}
+                        onPressPlay={() => this.setState({ paused: false })}
+                        onPressPause={() => this.setState({ paused: true })}
+                        onBack={this.onBack.bind(this)}
+                        onForward={this.onForward.bind(this)}
+                        paused={this.state.paused}
+                    />
+                    {video}
+                </View> */}
 
             </SafeAreaView>
         );

@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ReactNativeBlobUtil from 'react-native-blob-util'
 import AudioCard from '../../components/AudioCard';
 import Context from '../hooks/Context';
-import { fileServices } from '../services/fileServices';
+import { downloadFile, fileServices } from '../services/fileServices';
 import { API_URL } from '../utils/network/config';
 
 var RNFS = require('react-native-fs');

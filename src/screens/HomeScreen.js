@@ -80,7 +80,7 @@ const HomeScreen = () => {
                     await AsyncStorage.setItem('keys', JSON.stringify(removeItem))
 
                     const updatedSelected = selectedItems.filter(itemId => itemId !== id)
-                    setSelectedItems(updatedSelected)
+                    setSelectedItems(updatedSelected, ...updatedSelected)
 
                     console.log('selectedItems', selectedItems);
                     console.log('finish')
